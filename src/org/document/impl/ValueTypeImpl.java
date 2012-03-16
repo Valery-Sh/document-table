@@ -32,6 +32,7 @@ public class ValueTypeImpl implements ValueType{
         return type;
     }
 //outputStream = new ObjectOutputStream(new FileOutputStream(filename));
+    @Override
     public Object cloneValue(Object value) {
         Object target = null;
         try {

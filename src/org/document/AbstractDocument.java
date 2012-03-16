@@ -11,10 +11,10 @@ import java.util.Map;
  *
  * @author Valery
  */
-public abstract class AbstractDocument implements AnonymousDocument {
-    private Object data;
-    private Map dataMap = new HashMap();
-    private DocumentSchema schema;
+public abstract class AbstractDocument<D> implements AnonymousDocument {
+    protected D data;
+    protected Map dataMap = new HashMap();
+    protected DocumentSchema schema;
     
     @Override
     public Object get(Object key) {
@@ -36,11 +36,11 @@ public abstract class AbstractDocument implements AnonymousDocument {
         this.schema = schema;
     }
 
-    public Object getData() {
+    public D getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(D data) {
         this.data = data;
     }
     
