@@ -11,18 +11,19 @@ import java.util.Map;
  *
  * @author Valery
  */
-public abstract class AbstractDocument<K,V> implements AnonymousDocument<K,V> {
-    private Map<K,V> data = new HashMap<K,V>();
+public abstract class AbstractDocument implements AnonymousDocument {
+    private Object data;
+    private Map dataMap = new HashMap();
     private DocumentSchema schema;
     
     @Override
-    public V get(K key) {
-        return data.get(key);
+    public Object get(Object key) {
+        return dataMap.get(key);
     }
 
     @Override
-    public void put(K key, V value) {
-        data.put(key, value);
+    public void put(Object key, Object value) {
+        dataMap.put(key, value);
     }
 
     @Override
@@ -33,6 +34,14 @@ public abstract class AbstractDocument<K,V> implements AnonymousDocument<K,V> {
     @Override
     public void setSchema(DocumentSchema schema) {
         this.schema = schema;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
     
 }

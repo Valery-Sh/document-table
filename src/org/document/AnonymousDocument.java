@@ -10,9 +10,10 @@ import java.io.Serializable;
  *
  * @author Valery
  */
-public interface AnonymousDocument<K,V> extends Serializable {
-    V get(K key);
-    void put(K key,V value);
+public interface AnonymousDocument extends Serializable {
+    
+    Object get(Object key);
+    void put(Object key,Object value);
     DocumentSchema getSchema();
     void setSchema(DocumentSchema schema);
     

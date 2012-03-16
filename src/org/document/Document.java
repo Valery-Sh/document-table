@@ -8,7 +8,7 @@ package org.document;
  *
  * @author Valery
  */
-public class Document<K,V> extends AbstractDocument<K,V> {
+public class Document extends AbstractDocument {
     
     private Object primaryId;
     

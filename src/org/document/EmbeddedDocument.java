@@ -8,6 +8,6 @@ package org.document;
  *
  * @author Valery
  */
-public class EmbeddedDocument<K,V> extends AbstractDocument<K,V> {
+public class EmbeddedDocument extends AbstractDocument {
     
 }
