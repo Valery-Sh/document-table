@@ -50,6 +50,7 @@ public class ValueTypeImpl implements ValueType{
     public Object valueInstance() {
         return DocUtils.newInstance(type);
     }
+    
 /*    public Object valueInstance() {
         Object r;
 
