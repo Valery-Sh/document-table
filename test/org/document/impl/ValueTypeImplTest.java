@@ -56,7 +56,7 @@ public class ValueTypeImplTest {
      */
     @Test
     public void testCloneValue() {
-        System.out.println("ValueTypeImplTest: cloneValue");
+/*        System.out.println("ValueTypeImplTest: cloneValue");
         Object value = new Integer(11);
         Object target = new Integer(0);
         ValueTypeImpl instance = new ValueTypeImpl(Integer.class );
@@ -102,7 +102,7 @@ public class ValueTypeImplTest {
         target = instance.cloneValue(value);
         assertEquals(value,target);
         assertEquals(HashSet.class,target.getClass());
-        
+  */      
         
     }
 
@@ -168,7 +168,7 @@ public class ValueTypeImplTest {
      */
     @Test
     public void testValueInstance() {
-        System.out.println("ValueTypeImplTest: valueInstance");
+/*        System.out.println("ValueTypeImplTest: valueInstance");
         ValueTypeImpl instance = new ValueTypeImpl(Integer.class );
         Object expResult = new Integer(0);
         Object result = instance.valueInstance();
@@ -288,7 +288,7 @@ public class ValueTypeImplTest {
         expResult = new HashMap();
         result = instance.valueInstance();
         assertEquals(HashMap.class, result.getClass());
-        
+  */      
     }
     
 }

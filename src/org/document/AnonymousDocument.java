@@ -15,6 +15,6 @@ public interface AnonymousDocument extends Serializable {
     Object get(Object key);
     void put(Object key,Object value);
     DocumentSchema getSchema();
-    void setSchema(DocumentSchema schema);
+    //void setSchema(DocumentSchema schema);
     
 }

@@ -31,8 +31,8 @@ public abstract class AbstractDocument<D> implements AnonymousDocument {
         return schema;
     }
 
-    @Override
-    public void setSchema(DocumentSchema schema) {
+    
+    protected void setSchema(DocumentSchema schema) {
         this.schema = schema;
     }
 
@@ -47,7 +47,7 @@ public abstract class AbstractDocument<D> implements AnonymousDocument {
         return (D)DocUtils.newInstance((D)getData());
     }    
     public D cloneData() {
-        return DocUtils.cloneData((D)getData());
+        return DocUtils.cloneValue((D)getData());
     }
     
 }

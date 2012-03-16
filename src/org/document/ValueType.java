@@ -10,6 +10,6 @@ package org.document;
  */
 public interface  ValueType {
     Class getType();
-    public Object cloneValue(Object value);
+    //public Object cloneValue(Object value);
     int compare(Object o1, Object o2);
 }

@@ -5,11 +5,6 @@
 
 package org.document.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import org.document.DocUtils;
 import org.document.ValueType;
 
 /**
@@ -29,8 +24,8 @@ public class ValueTypeImpl implements ValueType{
         return type;
     }
 //outputStream = new ObjectOutputStream(new FileOutputStream(filename));
-    @Override
-    public Object cloneValue(Object value) {
+    //@Override
+/*    public Object cloneValue(Object value) {
         Object target = null;
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -47,10 +42,11 @@ public class ValueTypeImpl implements ValueType{
         }
         return target;
     }
-    public Object valueInstance() {
+    */
+/*    public Object valueInstance() {
         return DocUtils.newInstance(type);
     }
-    
+*/    
 /*    public Object valueInstance() {
         Object r;
 

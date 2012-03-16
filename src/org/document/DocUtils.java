@@ -17,7 +17,7 @@ import java.util.*;
  * @author Valery
  */
 public class DocUtils {
-    public static <T> T cloneData(T value) {
+    public static <T> T cloneValue(T value) {
         if ( value == null ) {
             return null;
         }
