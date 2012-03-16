@@ -11,5 +11,7 @@ import java.util.Map;
  * @author Valery
  */
 public interface DocumentSchema<K,V> {
-    Map<K,V> getValueTypes();
+    Class getMappingType();
+    Field getField(K fieldName);
+    Field put(K fieldName,Class prefferedType);
 }

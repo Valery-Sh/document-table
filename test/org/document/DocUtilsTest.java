@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Time;
 import java.util.*;
-import org.document.impl.ValueTypeImpl;
 import org.junit.*;
 import static org.junit.Assert.*;
 

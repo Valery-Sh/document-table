@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.document.impl;
+package org.document;
 
+import org.document.ValueType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Time;
@@ -15,9 +16,9 @@ import org.junit.*;
  *
  * @author Valery
  */
-public class ValueTypeImplTest {
+public class ValueTypelTest {
     
-    public ValueTypeImplTest() {
+    public ValueTypelTest() {
     }
 
     @BeforeClass
@@ -37,12 +38,12 @@ public class ValueTypeImplTest {
     }
 
     /**
-     * Test of getType method, of class ValueTypeImpl.
+     * Test of getType method, of class ValueType.
      */
     @Test
     public void testGetType() {
 /*        System.out.println("getType");
-        ValueTypeImpl instance = null;
+        ValueType instance = null;
         Class expResult = null;
         Class result = instance.getType();
         assertEquals(expResult, result);
@@ -52,14 +53,14 @@ public class ValueTypeImplTest {
     }
 
     /**
-     * Test of cloneValue method, of class ValueTypeImpl.
+     * Test of cloneValue method, of class ValueType.
      */
     @Test
     public void testCloneValue() {
-/*        System.out.println("ValueTypeImplTest: cloneValue");
+/*        System.out.println("ValueTypelTest: cloneValue");
         Object value = new Integer(11);
         Object target = new Integer(0);
-        ValueTypeImpl instance = new ValueTypeImpl(Integer.class );
+        ValueType instance = new ValueType(Integer.class );
         target = instance.cloneValue(value);
         assertEquals(value,target);
         assertEquals(Integer.class,target.getClass());
@@ -71,12 +72,12 @@ public class ValueTypeImplTest {
         list.add("a");
         
         //target = new ArrayList();
-        instance = new ValueTypeImpl(List.class );
+        instance = new ValueType(List.class );
         target = instance.cloneValue(value);
         assertEquals(value,target);
         assertEquals(ArrayList.class,target.getClass());
 
-        instance = new ValueTypeImpl(ArrayList.class );
+        instance = new ValueType(ArrayList.class );
         target = instance.cloneValue(value);
         assertEquals(value,target);
         assertEquals(ArrayList.class,target.getClass());
@@ -87,7 +88,7 @@ public class ValueTypeImplTest {
         map.put("a",0.3f);
         
         //target = new ArrayList();
-        instance = new ValueTypeImpl(Map.class );
+        instance = new ValueType(Map.class );
         target = instance.cloneValue(value);
         assertEquals(value,target);
         assertEquals(HashMap.class,target.getClass());
@@ -98,7 +99,7 @@ public class ValueTypeImplTest {
         set.add("a");
         
         //target = new ArrayList();
-        instance = new ValueTypeImpl(Set.class );
+        instance = new ValueType(Set.class );
         target = instance.cloneValue(value);
         assertEquals(value,target);
         assertEquals(HashSet.class,target.getClass());
@@ -107,14 +108,14 @@ public class ValueTypeImplTest {
     }
 
     /**
-     * Test of compare method, of class ValueTypeImpl.
+     * Test of compare method, of class ValueType.
      */
     @Test
     public void testCompare() {
         System.out.println("ValueTypeImplTest: compare");
         Object o1 = null;
         Object o2 = null;
-        ValueTypeImpl instance = new ValueTypeImpl(Integer.class );
+        ValueType instance = new ValueType(Integer.class );
         int expResult = 0;
         int result = instance.compare(o1, o2);
         assertEquals(expResult, result);
@@ -164,127 +165,127 @@ public class ValueTypeImplTest {
     }
     
     /**
-     * Test of compare method, of class ValueTypeImpl.
+     * Test of compare method, of class ValueType.
      */
     @Test
     public void testValueInstance() {
-/*        System.out.println("ValueTypeImplTest: valueInstance");
-        ValueTypeImpl instance = new ValueTypeImpl(Integer.class );
+/*        System.out.println("ValueTypelTest: valueInstance");
+        ValueType instance = new ValueType(Integer.class );
         Object expResult = new Integer(0);
         Object result = instance.valueInstance();
         assertEquals(Integer.class, result.getClass());
 
-        instance = new ValueTypeImpl(Long.class );
+        instance = new ValueType(Long.class );
         expResult = 0L;
         result = instance.valueInstance();
         assertEquals(Long.class, result.getClass());
         
-        instance = new ValueTypeImpl(Float.class );
+        instance = new ValueType(Float.class );
         expResult = 0.0f;
         result = instance.valueInstance();
         assertEquals(Float.class, result.getClass());
 
-        instance = new ValueTypeImpl(Double.class );
+        instance = new ValueType(Double.class );
         expResult = 0.0d;
         result = instance.valueInstance();
         assertEquals(Double.class, result.getClass());
         
-        instance = new ValueTypeImpl(Boolean.class );
+        instance = new ValueType(Boolean.class );
         expResult = false;
         result = instance.valueInstance();
         assertEquals(Boolean.class, result.getClass());
 
-        instance = new ValueTypeImpl(Byte.class );
+        instance = new ValueType(Byte.class );
         expResult = "0";
         result = instance.valueInstance();
         assertEquals(Byte.class, result.getClass());
 
-        instance = new ValueTypeImpl(Character.class );
+        instance = new ValueType(Character.class );
         expResult = ' ';
         result = instance.valueInstance();
         assertEquals(Character.class, result.getClass());
 
-        instance = new ValueTypeImpl(Date.class );
+        instance = new ValueType(Date.class );
         expResult = new Date();
         result = instance.valueInstance();
         assertEquals(Date.class, result.getClass());
         
-        instance = new ValueTypeImpl(java.sql.Date.class );
+        instance = new ValueType(java.sql.Date.class );
         expResult = new java.sql.Date(0);
         result = instance.valueInstance();
         assertEquals(java.sql.Date.class, result.getClass());
 
-        instance = new ValueTypeImpl(java.sql.Timestamp.class );
+        instance = new ValueType(java.sql.Timestamp.class );
         expResult = new java.sql.Timestamp(0);
         result = instance.valueInstance();
         assertEquals(java.sql.Timestamp.class, result.getClass());
         
-        instance = new ValueTypeImpl(Time.class );
+        instance = new ValueType(Time.class );
         expResult = new Time(0);
         result = instance.valueInstance();
         assertEquals(Time.class, result.getClass());
         
-        instance = new ValueTypeImpl(BigInteger.class );
+        instance = new ValueType(BigInteger.class );
         expResult = new BigInteger("0");
         result = instance.valueInstance();
         assertEquals(BigInteger.class, result.getClass());
 
-        instance = new ValueTypeImpl(BigDecimal.class );
+        instance = new ValueType(BigDecimal.class );
         expResult = new BigDecimal(0);
         result = instance.valueInstance();
         assertEquals(BigDecimal.class, result.getClass());
 
-        instance = new ValueTypeImpl(int.class );
+        instance = new ValueType(int.class );
         expResult = 0;
         result = instance.valueInstance();
         assertEquals(Integer.class, result.getClass());
 
-        instance = new ValueTypeImpl(char.class );
+        instance = new ValueType(char.class );
         expResult = ' ';
         result = instance.valueInstance();
         assertEquals(Character.class, result.getClass());
         
-        instance = new ValueTypeImpl(boolean.class );
+        instance = new ValueType(boolean.class );
         expResult = false;
         result = instance.valueInstance();
         assertEquals(Boolean.class, result.getClass());
         
-        instance = new ValueTypeImpl(long.class );
+        instance = new ValueType(long.class );
         expResult = 0L;
         result = instance.valueInstance();
         assertEquals(Long.class, result.getClass());
 
-        instance = new ValueTypeImpl(byte.class );
+        instance = new ValueType(byte.class );
         expResult = 0;
         result = instance.valueInstance();
         assertEquals(Byte.class, result.getClass());
 
-        instance = new ValueTypeImpl(float.class );
+        instance = new ValueType(float.class );
         expResult = 0;
         result = instance.valueInstance();
         assertEquals(Float.class, result.getClass());
 
-        instance = new ValueTypeImpl(double.class );
+        instance = new ValueType(double.class );
         expResult = 0;
         result = instance.valueInstance();
         assertEquals(Double.class, result.getClass());
         
-        instance = new ValueTypeImpl(Collection.class );
+        instance = new ValueType(Collection.class );
         expResult = new ArrayList();
         result = instance.valueInstance();
         assertEquals(ArrayList.class, result.getClass());
 
-        instance = new ValueTypeImpl(List.class );
+        instance = new ValueType(List.class );
         expResult = new ArrayList();
         result = instance.valueInstance();
         assertEquals(ArrayList.class, result.getClass());
 
-        instance = new ValueTypeImpl(Set.class );
+        instance = new ValueType(Set.class );
         expResult = new HashMap();
         result = instance.valueInstance();
         assertEquals(HashSet.class, result.getClass());
 
-        instance = new ValueTypeImpl(Map.class );
+        instance = new ValueType(Map.class );
         expResult = new HashMap();
         result = instance.valueInstance();
         assertEquals(HashMap.class, result.getClass());
