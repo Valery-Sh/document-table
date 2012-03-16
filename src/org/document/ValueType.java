@@ -22,6 +22,7 @@ public class ValueType {
         return type;
     }
     
+
     
     public int compare(Object o1, Object o2) {
         int r;

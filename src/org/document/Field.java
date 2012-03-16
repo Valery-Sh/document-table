@@ -10,16 +10,40 @@ import java.util.List;
  *
  * @author Valery
  */
-public interface Field {
-      void add(ValueType type);
-      void addEmbedded(EmbeddedDocument embedded);
-      
-      List getSupportedTypes();
-      //ValueType getPrefferedType();
-      
-      boolean isRequired();
-      boolean isNotNull();
-      void setRequiered(boolean required);
-      void setNotNull(boolean notNull);
-      
+public class Field {
+
+    protected List supportedTypes;
+    protected boolean required;
+    protected boolean notNull;
+
+    public void add(ValueType type) {
+        supportedTypes.add(type);
+    }
+
+    public void add(EmbeddedDocument embedded) {
+        supportedTypes.add(embedded);
+    }
+    public void add(DocumentReference ref) {
+        supportedTypes.add(ref);
+    }
+
+    public List getSupportedTypes() {
+        return supportedTypes;
+    }
+
+    public boolean isRequired() {
+        return this.required;
+    }
+
+    public boolean isNotNull() {
+        return this.notNull;
+    }
+
+    public void setNotNull(boolean notNull) {
+        this.notNull = notNull;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
 }

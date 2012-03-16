@@ -10,8 +10,9 @@ import java.util.Map;
  *
  * @author Valery
  */
-public interface DocumentSchema<K,V> {
+public interface DocumentSchema<K> {
     Class getMappingType();
-    Field getField(K fieldName);
-    Field put(K fieldName,Class prefferedType);
+    //Field getField(K fieldName);
+    //void put(K fieldName,Field field);
+    Map<K,Field> getFields();
 }
