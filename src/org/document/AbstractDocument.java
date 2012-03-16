@@ -43,5 +43,11 @@ public abstract class AbstractDocument<D> implements AnonymousDocument {
     public void setData(D data) {
         this.data = data;
     }
+    public D newDataInstance() {
+        return (D)DocUtils.newInstance((D)getData());
+    }    
+    public D cloneData() {
+        return DocUtils.cloneData((D)getData());
+    }
     
 }

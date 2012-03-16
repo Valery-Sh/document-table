@@ -2,36 +2,27 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package org.document.impl;
+package org.document;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import org.document.DocUtils;
-import org.document.ValueType;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
 
 /**
  *
  * @author Valery
  */
-public class ValueTypeImpl implements ValueType{
-    
-    private Class type;
-    
-    public ValueTypeImpl(Class clazz) {
-        type = clazz;
-    }
-    
-    @Override
-    public Class getType() {
-        return type;
-    }
-//outputStream = new ObjectOutputStream(new FileOutputStream(filename));
-    @Override
-    public Object cloneValue(Object value) {
-        Object target = null;
+public class DocUtils {
+    public static <T> T cloneData(T value) {
+        if ( value == null ) {
+            return null;
+        }
+        
+        T target = null;
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             
@@ -40,21 +31,22 @@ public class ValueTypeImpl implements ValueType{
             ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());            
             ObjectInputStream ois = new ObjectInputStream(bis);
             
-            target = ois.readObject();
+            target = (T)ois.readObject();
             
         } catch (Exception ex) {
-            
+            System.out.println("ERROR: " + ex.getMessage());
         }
         return target;
     }
-    public Object valueInstance() {
-        return DocUtils.newInstance(type);
-    }
-/*    public Object valueInstance() {
+    public static Object newInstance(Class type) {
+        
+        if ( type == null ) {
+            return null;
+        }
         Object r;
 
         if ( type.isPrimitive() ) {
-            r = primitiveInstance();
+            r = primitiveInstance(type);
         } else if ( type.equals(String.class) ) {
             r = "";
         } else if ( type.equals(Collection.class) ) {
@@ -68,7 +60,7 @@ public class ValueTypeImpl implements ValueType{
         } else if ( type.equals(AnonymousDocument.class) ) {
             r = new HashSet();
         } else {
-            r = wrapperInstance();
+            r = wrapperInstance(type);
         }
         if ( r != null ) {
             return r;
@@ -82,7 +74,13 @@ public class ValueTypeImpl implements ValueType{
         }
         return r;
     }
-    protected Object primitiveInstance() {
+    public static Object newInstance(Object source) {
+        if ( source == null ) {
+            return null;
+        }
+        return newInstance(source.getClass());
+    }
+    protected static Object primitiveInstance(Class type) {
         Object r = null;
         
         if ( type.equals(Boolean.TYPE) ) {
@@ -104,9 +102,9 @@ public class ValueTypeImpl implements ValueType{
         }
         return r;
     }    
-    protected Object wrapperInstance() {
+    protected static Object wrapperInstance(Class type) {
         Object r = null;
-
+        
         if ( type.equals(Boolean.class) ) {
             r = false;
         } else if ( type.equals(Integer.class) ) {
@@ -134,25 +132,5 @@ public class ValueTypeImpl implements ValueType{
         }
         return r;
     }    
-  */  
-    
-    @Override
-    public int compare(Object o1, Object o2) {
-        int r;
-        if ( o1 == null && o2 == null) {
-            r = 0;
-        } else if ( o1 == null ) {
-            r = -1;
-        } else if ( o2 == null ) {
-            r = 1;
-        } else if ( o1 == o2) {
-            r = 0;
-        } else if ( o1 instanceof Comparable) {
-            r = ((Comparable)o1).compareTo((Comparable)o2);
-        } else {
-            r = -2;
-        }
-        return r;
-    }
     
 }
