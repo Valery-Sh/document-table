@@ -277,7 +277,15 @@ public class DocUtilsTest {
         expResult = new HashMap();
         result = DocUtils.newInstance(Map.class);
         assertEquals(HashMap.class, result.getClass());
-
+        
+        String[] s = new String[10];
+        result = DocUtils.newInstance(s.getClass());
+        assertArrayEquals(new String[0],(String[])result);
+        
+        String[][] s1 = new String[10][3];
+        result = DocUtils.newInstance(s1.getClass());
+        assertArrayEquals(new String[0][0],(String[][])result);
+        
     }
 
 }

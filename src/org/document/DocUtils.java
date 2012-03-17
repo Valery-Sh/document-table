@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -42,7 +43,6 @@ public class DocUtils {
         return schema;
     }
 
-
     public static DocumentSchema createSchema(Class clazz) {
         DocumentSchema schema = new DefaultSchema(clazz);
         try {
@@ -52,8 +52,8 @@ public class DocUtils {
             for (int i = 0; i < props.length; i++) {
                 Class ptype = props[i].getPropertyType();
                 String pname = props[i].getName();
-                
-                Field f = createField(pname,ptype);
+
+                Field f = createField(pname, ptype);
                 if (f != null) {
                     schema.getFields().add(f);
                 }
@@ -63,6 +63,7 @@ public class DocUtils {
         }
         return schema;
     }
+
     public static Field createField(String name, Class type) {
         Field f = new Field(name, false, false);
         if (isValueType(type)) {
@@ -97,10 +98,7 @@ public class DocUtils {
     }
 
     public static boolean isArrayType(Class type) {
-        return /*
-                 * type.equals(Collection.class) || type.equals(Map.class) ||
-                 * type.equals(List.class) || type.equals(Set.class)
-                 */ type.isArray()
+        return  type.isArray()
                 || Collection.class.isAssignableFrom(type)
                 || Map.class.isAssignableFrom(type);
 
@@ -156,7 +154,12 @@ public class DocUtils {
             return r;
         }
         try {
-            r = type.newInstance();
+            if ( type.isArray() ) {
+                Class ct = type.getComponentType();
+                r = Array.newInstance(ct, 0);
+            } else {
+                r = type.newInstance();
+            }
         } catch (InstantiationException e) {
             System.out.println(e.getMessage());
         } catch (IllegalAccessException e) {
@@ -164,7 +167,7 @@ public class DocUtils {
         }
         return r;
     }
-
+    
     public static Object newInstance(Object source) {
         if (source == null) {
             return null;
