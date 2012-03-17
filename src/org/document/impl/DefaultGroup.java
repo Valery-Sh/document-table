@@ -11,7 +11,7 @@ import org.document.*;
  *
  * @author Valery
  */
-public class DefaultDocumentGroup extends AbstractDocumentGroup {
+public class DefaultGroup extends AbstractDocumentGroup {
 
     protected Map<Object, DocumentSchema> schemas;
 
@@ -78,4 +78,4 @@ public class DefaultDocumentGroup extends AbstractDocumentGroup {
         //TODO если не ObjectDocument
         return schema;
     }
-}//class
+}
