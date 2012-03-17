@@ -12,9 +12,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import org.document.impl.DefaultSchema;
 
 /**
  *
@@ -23,18 +25,75 @@ import java.util.*;
 public class DocUtils {
 
     public static DocumentSchema createSchema(Class clazz) {
+        DocumentSchema schema = new DefaultSchema(clazz);
         try {
-            BeanInfo binfo = Introspector.getBeanInfo(clazz,Object.class);
+            BeanInfo binfo = Introspector.getBeanInfo(clazz, Object.class);
             PropertyDescriptor[] props = binfo.getPropertyDescriptors();
-            
+
             for (int i = 0; i < props.length; i++) {
-                System.out.println(i + ") " + props[i].getName() + "; ptype: " + props[i].getPropertyType() +"; read Method: " + props[i].getReadMethod());
-                //props[i].getReadMethod().
+                Class ptype = props[i].getPropertyType();
+                String pname = props[i].getName();
+/*                System.out.println(i + ") " + props[i].getName() + "; ptype: " + props[i].getPropertyType() + "; read Method: " + props[i].getReadMethod());
+                
+                try {
+                    java.lang.reflect.Field rf = ptype.getDeclaredField("myOrder");
+                    if (rf != null) {
+                        int m = rf.getModifiers();
+                        System.out.println("m=" + m + "; M=" + Modifier.TRANSIENT);
+                    }
+
+                } catch (Exception ee) {
+                    System.out.println("");
+                }
+  */              
+                Field f = new Field(pname, false, false);
+                if (isValueType(ptype)) {
+                    f.add(new ValueType(ptype));
+                } else if (isArrayType(ptype)) {
+                    f.add(new ArrayType());
+                } else if (DocumentReference.class.isAssignableFrom(ptype)) {
+                    f.add(new ReferenceType());
+                } else {
+                    DocumentSchema embSchema = DocUtils.createSchema(ptype);
+                    f.add(embSchema);
+                }
+                if (f != null) {
+                    schema.getFields().add(f);
+                }
+
             }//for
-            
+
         } catch (IntrospectionException ex) {
         }
-        return null;
+        return schema;
+    }
+
+    public static boolean isValueType(Class type) {
+        return type.isPrimitive()
+                || type.equals(java.util.Date.class)
+                || type.equals(String.class)
+                || type.equals(Boolean.class)
+                || type.equals(Integer.class)
+                || type.equals(Byte.class)
+                || type.equals(Float.class)
+                || type.equals(Double.class)
+                || type.equals(Character.class)
+                || type.equals(Long.class)
+                || type.equals(java.sql.Time.class)
+                || type.equals(java.sql.Timestamp.class)
+                || type.equals(java.sql.Date.class)
+                || type.equals(BigInteger.class)
+                || type.equals(BigDecimal.class);
+    }
+
+    public static boolean isArrayType(Class type) {
+        return /*
+                 * type.equals(Collection.class) || type.equals(Map.class) ||
+                 * type.equals(List.class) || type.equals(Set.class)
+                 */ type.isArray()
+                || Collection.class.isAssignableFrom(type)
+                || Map.class.isAssignableFrom(type);
+
     }
 
     public static <T> T cloneValue(T value) {

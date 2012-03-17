@@ -40,8 +40,27 @@ public class DocUtilsTest {
      */
     @Test
     public void testCreateSchema() {
-        DocUtils.createSchema(Person.class);
+        DocumentSchema schema = DocUtils.createSchema(Person.class);
+        assertEquals(5,schema.getFields().size());
     }
+    
+    @Test
+    public void testIsArrayType() {
+        System.out.println("DocUtils: isArrayType(Class)");
+        boolean result = DocUtils.isArrayType(ArrayList.class);
+        assertTrue(result);
+
+        result = DocUtils.isArrayType(List.class);
+        assertTrue(result);
+        result = DocUtils.isArrayType(Map.class);
+        assertTrue(result);
+        result = DocUtils.isArrayType(Set.class);
+        assertTrue(result);
+
+        result = DocUtils.isArrayType(int.class);
+        assertFalse(result);
+    }
+    
     /**
      * Test of cloneValue method, of class DocUtils.
      */

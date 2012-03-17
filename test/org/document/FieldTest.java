@@ -103,7 +103,7 @@ public class FieldTest {
     @Test
     public void testAdd_DocumentReference() {
         System.out.println("Field: add(DocumentReference)");
-        DocumentReference ref = new DefaultReference("idRef");
+        ReferenceType ref = new ReferenceType();
         // No supported type added yet
         Field instance = new Field("customer");
         instance.add(ref);
@@ -117,7 +117,7 @@ public class FieldTest {
     @Test
     public void testGetSupportedTypes() {
         System.out.println("Field: getSupportedTypes()");
-        DocumentReference ref = new DefaultReference("idRef");
+        ReferenceType ref = new ReferenceType();
         // No supported type added yet
         Field instance = new Field("customer");
         instance.add(ref);

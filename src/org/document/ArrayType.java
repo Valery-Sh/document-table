@@ -5,6 +5,7 @@
 package org.document;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,6 +21,10 @@ public class ArrayType {
     
     public ArrayType() {
         defaultValue = new ArrayList(2);
+    }
+    public ArrayType(Class ... supports) {
+        defaultValue = new ArrayList(2);
+        supportedTypes.addAll(Arrays.asList(supports));
     }
 
     public void add(Class type) {

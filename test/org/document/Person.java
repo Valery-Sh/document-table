@@ -20,7 +20,10 @@ public class Person implements Serializable{
     private String lastName;
     private Date  birthDay;
     private int sex;
-
+    //@Embedded
+    
+    private transient Order order;
+    
     public Person() {
        this.firstName = "Bill";
        this.lastName = "Down";
@@ -34,11 +37,15 @@ public class Person implements Serializable{
        this.birthDay = birthDay;
        this.sex = sex;
     }
+    //@Embedded
+    public Order getOrder() {
+        return this.order;
+    }
     public Date getBirthDay() {
         return birthDay;
     }
 
-    public void setBirthDate(Date birthDay) {
+    public void setBirthDay(Date birthDay) {
         this.birthDay = birthDay;
     }
 
