@@ -6,6 +6,7 @@ package org.document;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -20,6 +21,7 @@ public class Person implements Serializable{
     private String lastName;
     private Date  birthDay;
     private int sex;
+    private List family;    
     //@Embedded
     
     private transient Order order;
@@ -36,7 +38,9 @@ public class Person implements Serializable{
        this.lastName = lastName;
        this.birthDay = birthDay;
        this.sex = sex;
+       
     }
+    
     //@Embedded
     public Order getOrder() {
         return this.order;
@@ -71,6 +75,14 @@ public class Person implements Serializable{
 
     public void setSex(int sex) {
         this.sex = sex;
+    }
+
+    public List getFamily() {
+        return family;
+    }
+
+    public void setFamily(List family) {
+        this.family = family;
     }
 
     @Override

@@ -12,7 +12,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -24,6 +23,26 @@ import org.document.impl.DefaultSchema;
  */
 public class DocUtils {
 
+    public static <K, V> DocumentSchema createSchema(Map<String, V> map) {
+        DocumentSchema schema = new DefaultSchema();
+        for (Map.Entry<String, V> mt : map.entrySet()) {
+            Class ptype = String.class;
+            if (mt.getValue() != null) {
+                ptype = mt.getValue().getClass();
+            }
+
+            String pname = mt.getKey();
+
+            Field f = createField(pname, ptype);
+            if (f != null) {
+                schema.getFields().add(f);
+            }
+
+        }
+        return schema;
+    }
+
+
     public static DocumentSchema createSchema(Class clazz) {
         DocumentSchema schema = new DefaultSchema(clazz);
         try {
@@ -33,39 +52,30 @@ public class DocUtils {
             for (int i = 0; i < props.length; i++) {
                 Class ptype = props[i].getPropertyType();
                 String pname = props[i].getName();
-/*                System.out.println(i + ") " + props[i].getName() + "; ptype: " + props[i].getPropertyType() + "; read Method: " + props[i].getReadMethod());
                 
-                try {
-                    java.lang.reflect.Field rf = ptype.getDeclaredField("myOrder");
-                    if (rf != null) {
-                        int m = rf.getModifiers();
-                        System.out.println("m=" + m + "; M=" + Modifier.TRANSIENT);
-                    }
-
-                } catch (Exception ee) {
-                    System.out.println("");
-                }
-  */              
-                Field f = new Field(pname, false, false);
-                if (isValueType(ptype)) {
-                    f.add(new ValueType(ptype));
-                } else if (isArrayType(ptype)) {
-                    f.add(new ArrayType());
-                } else if (DocumentReference.class.isAssignableFrom(ptype)) {
-                    f.add(new ReferenceType());
-                } else {
-                    DocumentSchema embSchema = DocUtils.createSchema(ptype);
-                    f.add(embSchema);
-                }
+                Field f = createField(pname,ptype);
                 if (f != null) {
                     schema.getFields().add(f);
                 }
-
             }//for
 
         } catch (IntrospectionException ex) {
         }
         return schema;
+    }
+    public static Field createField(String name, Class type) {
+        Field f = new Field(name, false, false);
+        if (isValueType(type)) {
+            f.add(new ValueType(type));
+        } else if (isArrayType(type)) {
+            f.add(new ArrayType());
+        } else if (DocumentReference.class.isAssignableFrom(type)) {
+            f.add(new ReferenceType());
+        } else {
+            DocumentSchema embSchema = DocUtils.createSchema(type);
+            f.add(embSchema);
+        }
+        return f;
     }
 
     public static boolean isValueType(Class type) {

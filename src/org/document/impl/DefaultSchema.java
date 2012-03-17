@@ -37,9 +37,10 @@ public class DefaultSchema implements DocumentSchema{
 
     @Override
     public Field getField(Object fieldName) {
-        int i = fields.indexOf(fieldName);
-        if ( i >= 0 ) {
-            return fields.get(i);
+        for ( Field f : fields) {
+            if ( f.getName().equals(fieldName)) {
+                return f;
+            }
         }
         return null;
     }

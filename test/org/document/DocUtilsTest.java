@@ -8,8 +8,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Time;
 import java.util.*;
-import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.*;
 
 /**
  *
@@ -40,8 +40,56 @@ public class DocUtilsTest {
      */
     @Test
     public void testCreateSchema() {
+        int elemCount = 6;
+        System.out.println("DocUtils: createSchema(Class)");        
         DocumentSchema schema = DocUtils.createSchema(Person.class);
-        assertEquals(5,schema.getFields().size());
+        assertEquals(elemCount,schema.getFields().size());
+        assertEquals(Person.class,schema.getMappingType());
+        List<Field> fs = schema.getFields();
+        
+        Field f = schema.getField("firstName");
+        assertNotNull(f);
+        assertEquals(f.getName(),"firstName");
+        
+        f = schema.getField("lastName");
+        assertNotNull(f);
+        assertEquals(f.getName(),"lastName");
+        
+        f = schema.getField("birthDay");
+        assertNotNull(f);
+        assertEquals(f.getName(),"birthDay");
+        
+        f = schema.getField("sex");
+        assertNotNull(f);
+        assertEquals(f.getName(),"sex");
+        //
+        // ArrayType
+        //
+        f = schema.getField("family");
+        assertNotNull(f);
+        assertEquals(f.getName(),"family");
+        assertEquals(ArrayType.class,f.getSupportedTypes().get(0).getClass());
+        ArrayType at = (ArrayType)f.getSupportedTypes().get(0);
+        
+        //
+        // embedded
+        //
+        f = schema.getField("order");
+        assertNotNull(f);
+        assertEquals(f.getName(),"order");
+        
+        
+        DocumentSchema embschema = (DocumentSchema)f.supportedTypes.get(0);
+        assertNotNull(embschema);
+        assertEquals(Order.class,embschema.getMappingType());
+        assertEquals(1,embschema.getFields().size());
+        
+        f = embschema.getField("orderNum");
+        assertNotNull(f);
+        ValueType vt = (ValueType)f.getSupportedTypes().get(0);
+        assertEquals(Long.class,vt.getType());
+        
+        
     }
     
     @Test
