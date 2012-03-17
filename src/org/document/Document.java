@@ -4,15 +4,17 @@
  */
 package org.document;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Valery
  */
-public class Document extends AbstractDocument {
+public interface Document extends Serializable {
     
-    private Object primaryId;
+    Object get(Object key);
+    void put(Object key,Object value);
+    DocumentSchema getSchema();
+    //void setSchema(DocumentSchema schema);
     
-    public Object getPrimaryId() {
-        return primaryId;
-    }
 }

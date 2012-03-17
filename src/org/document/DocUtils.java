@@ -17,6 +17,13 @@ import java.util.*;
  * @author Valery
  */
 public class DocUtils {
+    
+
+    public static DocumentSchema createSchema(Class clazz) {
+        return null;
+    }
+
+    
     public static <T> T cloneValue(T value) {
         if ( value == null ) {
             return null;
@@ -57,7 +64,7 @@ public class DocUtils {
             r = new ArrayList();
         } else if ( type.equals(Set.class) ) {
             r = new HashSet();
-        } else if ( type.equals(AnonymousDocument.class) ) {
+        } else if ( type.equals(Document.class) ) {
             r = new HashSet();
         } else {
             r = wrapperInstance(type);

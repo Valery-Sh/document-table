@@ -4,7 +4,7 @@
  */
 package org.document;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  *
@@ -12,7 +12,6 @@ import java.util.Map;
  */
 public interface DocumentSchema<K> {
     Class getMappingType();
-    //Field getField(K fieldName);
-    //void put(K fieldName,Field field);
-    Map<K,Field> getFields();
+    List<Field> getFields();
+    Field getField(Object fieldName);
 }
