@@ -22,8 +22,6 @@ public class ValueType {
         return type;
     }
     
-
-    
     public int compare(Object o1, Object o2) {
         int r;
         if ( o1 == null && o2 == null) {

@@ -21,8 +21,8 @@ public class Field {
         assert(name != null);
         this.name = name;
         supportedTypes = new ArrayList();
-        ValueType vt = new ValueType(Object.class);
-        supportedTypes.add(vt);
+        //ValueType vt = new ValueType(Object.class);
+        //supportedTypes.add(vt);
     }
     public Field(Object name,boolean required,boolean notNull,Class ... supported) {
         assert(name != null);

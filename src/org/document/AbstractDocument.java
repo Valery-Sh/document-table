@@ -31,11 +31,6 @@ public class AbstractDocument implements Document {
         return schema;
     }
 
-    
-/*    protected void setSchema(DocumentSchema schema) {
-        this.schema = schema;
-    }
-*/
     protected Object newDataInstance() {
         return DocUtils.newInstance(dataMap);
     }    

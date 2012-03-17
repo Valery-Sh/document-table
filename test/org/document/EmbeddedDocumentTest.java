@@ -4,9 +4,6 @@
  */
 package org.document;
 
-import java.util.Date;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import org.junit.*;
 
 /**
@@ -33,6 +30,9 @@ public class EmbeddedDocumentTest {
     @After
     public void tearDown() {
     }
+    @Test
+    public void testCloneData() {
+    }    
 /*
     @Test
     public void testCloneData() {

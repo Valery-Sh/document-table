@@ -35,7 +35,13 @@ public class DocUtilsTest {
     @After
     public void tearDown() {
     }
-
+    /**
+     * Test of cloneValue method, of class DocUtils.
+     */
+    @Test
+    public void testCreateSchema() {
+        DocUtils.createSchema(Person.class);
+    }
     /**
      * Test of cloneValue method, of class DocUtils.
      */

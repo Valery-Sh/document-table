@@ -4,6 +4,10 @@
  */
 package org.document;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -17,127 +21,139 @@ import java.util.*;
  * @author Valery
  */
 public class DocUtils {
-    
 
     public static DocumentSchema createSchema(Class clazz) {
+        try {
+            BeanInfo binfo = Introspector.getBeanInfo(clazz,Object.class);
+            PropertyDescriptor[] props = binfo.getPropertyDescriptors();
+            
+            for (int i = 0; i < props.length; i++) {
+                System.out.println(i + ") " + props[i].getName() + "; ptype: " + props[i].getPropertyType() +"; read Method: " + props[i].getReadMethod());
+                //props[i].getReadMethod().
+            }//for
+            
+        } catch (IntrospectionException ex) {
+        }
         return null;
     }
 
-    
     public static <T> T cloneValue(T value) {
-        if ( value == null ) {
+        if (value == null) {
             return null;
         }
-        
+
         T target = null;
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            
+
             ObjectOutputStream os = new ObjectOutputStream(bos);
             os.writeObject(value);
-            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());            
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
             ObjectInputStream ois = new ObjectInputStream(bis);
-            
-            target = (T)ois.readObject();
-            
+
+            target = (T) ois.readObject();
+
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
         return target;
     }
+
     public static Object newInstance(Class type) {
-        
-        if ( type == null ) {
+
+        if (type == null) {
             return null;
         }
         Object r;
 
-        if ( type.isPrimitive() ) {
+        if (type.isPrimitive()) {
             r = primitiveInstance(type);
-        } else if ( type.equals(String.class) ) {
+        } else if (type.equals(String.class)) {
             r = "";
-        } else if ( type.equals(Collection.class) ) {
+        } else if (type.equals(Collection.class)) {
             r = new ArrayList();
-        } else if ( type.equals(Map.class) ) {
+        } else if (type.equals(Map.class)) {
             r = new HashMap();
-        } else if ( type.equals(List.class) ) {
+        } else if (type.equals(List.class)) {
             r = new ArrayList();
-        } else if ( type.equals(Set.class) ) {
+        } else if (type.equals(Set.class)) {
             r = new HashSet();
-        } else if ( type.equals(Document.class) ) {
+        } else if (type.equals(Document.class)) {
             r = new HashSet();
         } else {
             r = wrapperInstance(type);
         }
-        if ( r != null ) {
+        if (r != null) {
             return r;
         }
         try {
             r = type.newInstance();
-        } catch(InstantiationException e) {
-           System.out.println(e.getMessage());  
-        } catch(IllegalAccessException e) {
-           System.out.println(e.getMessage());  
+        } catch (InstantiationException e) {
+            System.out.println(e.getMessage());
+        } catch (IllegalAccessException e) {
+            System.out.println(e.getMessage());
         }
         return r;
     }
+
     public static Object newInstance(Object source) {
-        if ( source == null ) {
+        if (source == null) {
             return null;
         }
         return newInstance(source.getClass());
     }
+
     protected static Object primitiveInstance(Class type) {
         Object r = null;
-        
-        if ( type.equals(Boolean.TYPE) ) {
+
+        if (type.equals(Boolean.TYPE)) {
             r = false;
-        } else if ( type.equals(Integer.TYPE) ) {
+        } else if (type.equals(Integer.TYPE)) {
             r = 0;
 //            return new Integer(0);
-            
-        } else if ( type.equals(Byte.TYPE) ) {
+
+        } else if (type.equals(Byte.TYPE)) {
             r = new Byte("0");
-        } else if ( type.equals(Float.TYPE) ) {
+        } else if (type.equals(Float.TYPE)) {
             r = 0.0f;
-        } else if ( type.equals(Double.TYPE) ) {
+        } else if (type.equals(Double.TYPE)) {
             r = 0.0d;
-        } else if ( type.equals(Character.TYPE) ) {
-            r =' ';
-        } else if ( type.equals(Long.TYPE) ) {
+        } else if (type.equals(Character.TYPE)) {
+            r = ' ';
+        } else if (type.equals(Long.TYPE)) {
             r = 0L;
         }
         return r;
-    }    
+    }
+
     protected static Object wrapperInstance(Class type) {
         Object r = null;
-        
-        if ( type.equals(Boolean.class) ) {
+
+        if (type.equals(Boolean.class)) {
             r = false;
-        } else if ( type.equals(Integer.class) ) {
+        } else if (type.equals(Integer.class)) {
             r = 0;
-        } else if ( type.equals(Byte.class) ) {
+        } else if (type.equals(Byte.class)) {
             r = new Byte("0");
-        } else if ( type.equals(Float.class) ) {
+        } else if (type.equals(Float.class)) {
             r = 0.0f;
-        } else if ( type.equals(Double.class) ) {
+        } else if (type.equals(Double.class)) {
             r = 0.0d;
-        } else if ( type.equals(Character.class) ) {
-            r =' ';
-        } else if ( type.equals(Long.class) ) {
+        } else if (type.equals(Character.class)) {
+            r = ' ';
+        } else if (type.equals(Long.class)) {
             r = 0L;
-        } else if ( type.equals(java.sql.Time.class) ) {
+        } else if (type.equals(java.sql.Time.class)) {
             r = new java.sql.Time(0);
-        } else if ( type.equals(java.sql.Timestamp.class) ) {
+        } else if (type.equals(java.sql.Timestamp.class)) {
             r = new java.sql.Timestamp(0);
-        } else if ( type.equals(java.sql.Date.class) ) {
+        } else if (type.equals(java.sql.Date.class)) {
             r = new java.sql.Date(0);
-        } else if ( type.equals(BigInteger.class) ) {
+        } else if (type.equals(BigInteger.class)) {
             r = new BigInteger("0");
-        } else if ( type.equals(BigDecimal.class) ) {
+        } else if (type.equals(BigDecimal.class)) {
             r = new BigDecimal(0);
         }
         return r;
-    }    
-    
+    }
 }

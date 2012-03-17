@@ -75,6 +75,7 @@ public class DefaultDocumentGroup extends AbstractDocumentGroup {
         if ( doc instanceof ObjectDocument) {
             schemas.get( ((ObjectDocument)doc).getJavaBean().getClass() );
         }
+        //TODO если не ObjectDocument
         return schema;
     }
 }//class

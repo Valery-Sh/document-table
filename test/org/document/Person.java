@@ -12,6 +12,10 @@ import java.util.Date;
  * @author Valery
  */
 public class Person implements Serializable{
+    private String s1;
+    protected String s2;
+    public String s3;
+    
     private String firstName;
     private String lastName;
     private Date  birthDay;
