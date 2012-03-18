@@ -60,7 +60,6 @@ public class Field {
     public void add(ArrayType type) {
         supportedTypes.add(type);
     }
-
     
     public void add(DocumentSchema embedded) {
         supportedTypes.add(embedded);

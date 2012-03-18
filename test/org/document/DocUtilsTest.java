@@ -4,6 +4,7 @@
  */
 package org.document;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Time;
@@ -155,6 +156,15 @@ public class DocUtilsTest {
         target = DocUtils.cloneValue(value);
         assertEquals(value,target);
         assertEquals(HashSet.class,target.getClass());
+        
+        String[][] array = new String[2][3];
+        array[1][2] = "Smith";        
+        target = DocUtils.cloneValue(array);
+        assertNotNull(target);
+        assertEquals(array.getClass(),target.getClass());
+        String elem = ((String[][])target)[1][2];
+        assertEquals("Smith",elem);
+        
     }
 
     /**
@@ -283,9 +293,38 @@ public class DocUtilsTest {
         assertArrayEquals(new String[0],(String[])result);
         
         String[][] s1 = new String[10][3];
+        Class ct = s1.getClass().getComponentType();
+        String[][] s2;
+        Object o1 = Array.newInstance(String.class, 2);
+        
         result = DocUtils.newInstance(s1.getClass());
         assertArrayEquals(new String[0][0],(String[][])result);
         
     }
-
+    /**
+     * Test of cloneValue method, of class DocUtils.
+     */
+    @Test
+    public void testGetBaseComponentType() {
+        String[][] instance = new String[2][3];
+        //assertEquals(String[][].class,instance.getClass());
+        
+        //Class r1 = s1.getClass().getComponentType();
+        int[] dims = new int[] {1};
+        Class result = DocUtils.getBaseComponentType(instance.getClass(),dims);
+        assertNotNull(instance);
+        assertEquals(String.class,result);
+        assertEquals(2,dims[0]);
+    }
+    
+    @Test
+    public void testNewArrayInstance() {
+        String[][] instance = new String[2][3];
+        
+        Object result = DocUtils.newArrayInstance(instance.getClass());
+        assertNotNull(result);
+        assertEquals(String[][].class,result.getClass());
+        assertEquals(0,((String[][])result).length);
+    }
+    
 }

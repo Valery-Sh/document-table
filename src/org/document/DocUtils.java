@@ -69,7 +69,11 @@ public class DocUtils {
         if (isValueType(type)) {
             f.add(new ValueType(type));
         } else if (isArrayType(type)) {
-            f.add(new ArrayType());
+            if (type.isArray()) {
+                f.add(new ComponentType(type));
+            } else {
+                f.add(new ArrayType());
+            }
         } else if (DocumentReference.class.isAssignableFrom(type)) {
             f.add(new ReferenceType());
         } else {
@@ -78,7 +82,22 @@ public class DocUtils {
         }
         return f;
     }
-
+/*    public static enum SchemaType {
+        valueType,
+        arrayType,
+        componentType,
+        documentType,
+        referenceType
+        
+    }
+    public static SchemaType getSchemaType(Class type) {
+        SchemaType st;
+        if ( isValueType(type)) {
+            st = SchemaType.valueType;
+        } else if ( is ArrayType)
+        return st;
+    }
+    */
     public static boolean isValueType(Class type) {
         return type.isPrimitive()
                 || type.equals(java.util.Date.class)
@@ -104,6 +123,7 @@ public class DocUtils {
 
     }
 
+    
     public static <T> T cloneValue(T value) {
         if (value == null) {
             return null;
@@ -124,6 +144,34 @@ public class DocUtils {
             System.out.println("ERROR: " + ex.getMessage());
         }
         return target;
+    }
+
+    public static Object newArrayInstance(Class type) {
+
+        if (type == null || !type.isArray()) {
+            return null;
+        }
+        Object result;
+        Class aclass;
+        int[] dims = new int[]{0}; // to calculate an array dimmention
+        dims[0] = 1;
+        aclass = getBaseComponentType(type, dims);
+        int[] d = new int[dims[0]]; // all element values == 0
+        result = Array.newInstance(aclass, d);
+        return result;
+    }
+
+    public static Class getBaseComponentType(Class type, int[] dimCount) {
+
+        if (type == null) {
+            return null;
+        }
+        Class result = type.getComponentType();
+        if (result.isArray()) {
+            dimCount[0]++;
+            result = getBaseComponentType(result, new int[1]);
+        }
+        return result;
     }
 
     public static Object newInstance(Class type) {
@@ -154,7 +202,7 @@ public class DocUtils {
             return r;
         }
         try {
-            if ( type.isArray() ) {
+            if (type.isArray()) {
                 Class ct = type.getComponentType();
                 r = Array.newInstance(ct, 0);
             } else {
@@ -167,7 +215,7 @@ public class DocUtils {
         }
         return r;
     }
-    
+
     public static Object newInstance(Object source) {
         if (source == null) {
             return null;
