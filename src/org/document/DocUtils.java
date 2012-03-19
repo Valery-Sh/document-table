@@ -72,34 +72,19 @@ public class DocUtils {
             if (type.isArray()) {
                 f.add(new ComponentType(type));
             } else {
-                f.add(new ArrayType());
+                f.add(new ArrayType(type));
             }
         } else if (DocumentReference.class.isAssignableFrom(type)) {
             f.add(new ReferenceType());
         } else {
             DocumentSchema embSchema = DocUtils.createSchema(type);
-            f.add(embSchema);
+            f.add(new EmbeddedType(embSchema));
         }
         return f;
     }
-/*    public static enum SchemaType {
-        valueType,
-        arrayType,
-        componentType,
-        documentType,
-        referenceType
-        
-    }
-    public static SchemaType getSchemaType(Class type) {
-        SchemaType st;
-        if ( isValueType(type)) {
-            st = SchemaType.valueType;
-        } else if ( is ArrayType)
-        return st;
-    }
-    */
     public static boolean isValueType(Class type) {
         return type.isPrimitive()
+                || type.equals(java.lang.Object.class)
                 || type.equals(java.util.Date.class)
                 || type.equals(String.class)
                 || type.equals(Boolean.class)
@@ -183,17 +168,17 @@ public class DocUtils {
 
         if (type.isPrimitive()) {
             r = primitiveInstance(type);
-        } else if (type.equals(String.class)) {
+        } else if (type.equals(String.class)  ) {
             r = "";
-        } else if (type.equals(Collection.class)) {
+        } else if (type.equals(Object.class)  ) {
+            r = new java.lang.Object();
+        }  else if (type.equals(Collection.class)) {
             r = new ArrayList();
         } else if (type.equals(Map.class)) {
             r = new HashMap();
         } else if (type.equals(List.class)) {
             r = new ArrayList();
         } else if (type.equals(Set.class)) {
-            r = new HashSet();
-        } else if (type.equals(Document.class)) {
             r = new HashSet();
         } else {
             r = wrapperInstance(type);

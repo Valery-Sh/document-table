@@ -52,8 +52,12 @@ public class Field {
         }
     }
 */
+
+    public void add(SchemaType type) {
+        supportedTypes.add(type);
+    }
     
-    public void add(ValueType type) {
+/*    public void add(ValueType type) {
         supportedTypes.add(type);
     }
 
@@ -67,8 +71,8 @@ public class Field {
     public void add(ReferenceType ref) {
         supportedTypes.add(ref);
     }
-
-    public List getSupportedTypes() {
+*/
+    protected List getSupportedTypes() {
         return supportedTypes;
     }
 

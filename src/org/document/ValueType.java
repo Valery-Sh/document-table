@@ -5,21 +5,24 @@
 
 package org.document;
 
+import java.util.List;
+
 /**
  *
  * @author Valery
  */
-public class ValueType {
+public class ValueType implements SchemaType{
     
-    private Class type;
+    private Class javaType;
     private Object defaultValue;
     
     public ValueType(Class type) {
-        this.type = type;
+        this.javaType = type;
     }
     
-    public Class getType() {
-        return type;
+    @Override
+    public Class getJavaType() {
+        return javaType;
     }
     
     public int compare(Object o1, Object o2) {
@@ -47,5 +50,5 @@ public class ValueType {
     public void setDefaultValue(Object value) {
         this.defaultValue = value;
     }
-    
+
 }

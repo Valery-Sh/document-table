@@ -5,10 +5,9 @@
 package org.document;
 
 import java.util.List;
-import org.document.impl.DefaultReference;
 import org.document.impl.DefaultSchema;
-import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.*;
 
 /**
  *
@@ -77,8 +76,8 @@ public class FieldTest {
         type = (ValueType)instance.getSupportedTypes().get(1);
         assertNull(type.getDefaultValue());
         
-        assertEquals(Integer.class,((ValueType)instance.getSupportedTypes().get(0)).getType());
-        assertEquals(String.class,((ValueType)instance.getSupportedTypes().get(1)).getType());        
+        assertEquals(Integer.class,((ValueType)instance.getSupportedTypes().get(0)).getJavaType());
+        assertEquals(String.class,((ValueType)instance.getSupportedTypes().get(1)).getJavaType());        
 
         
     }
@@ -92,7 +91,7 @@ public class FieldTest {
         DocumentSchema schema = new DefaultSchema();
         // No supported type added yet
         Field instance = new Field("address");
-        instance.add(schema);
+        instance.add(new EmbeddedType(schema));
         assertEquals(1,instance.getSupportedTypes().size());
         
     }

@@ -8,6 +8,13 @@ package org.document;
  *
  * @author Valery
  */
-public class ReferenceType {
+public class ReferenceType  implements SchemaType {
     
+    private Class javaType;
+    
+    @Override
+    public Class getJavaType() {
+        return javaType;
+    }
+
 }

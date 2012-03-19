@@ -33,14 +33,14 @@ public class ValueTypeTest {
     }
 
     /**
-     * Test of getType method, of class ValueType.
+     * Test of getJavaType method, of class ValueType.
      */
     @Test
     public void testGetType() {
         System.out.println("ValueType: getType()");
         ValueType instance = new ValueType(Integer.class);
         Class expResult = Integer.class;
-        Class result = instance.getType();
+        Class result = instance.getJavaType();
         assertEquals(expResult, result);
     }
 

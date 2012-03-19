@@ -79,8 +79,10 @@ public class DocUtilsTest {
         assertNotNull(f);
         assertEquals(f.getName(),"order");
         
+        EmbeddedType embedded = (EmbeddedType)f.supportedTypes.get(0);
+        assertNotNull(embedded);        
+        DocumentSchema embschema = embedded.getSchema();
         
-        DocumentSchema embschema = (DocumentSchema)f.supportedTypes.get(0);
         assertNotNull(embschema);
         assertEquals(Order.class,embschema.getMappingType());
         assertEquals(1,embschema.getFields().size());
@@ -88,7 +90,7 @@ public class DocUtilsTest {
         f = embschema.getField("orderNum");
         assertNotNull(f);
         ValueType vt = (ValueType)f.getSupportedTypes().get(0);
-        assertEquals(Long.class,vt.getType());
+        assertEquals(Long.class,vt.getJavaType());
         
         
     }
@@ -178,57 +180,46 @@ public class DocUtilsTest {
         Object result = DocUtils.newInstance(Integer.class);
         assertEquals(Integer.class, result.getClass());
 
-        //instance = new ValueTypeImpl(Long.class );
         expResult = 0L;
         result = DocUtils.newInstance(Long.class);
         assertEquals(Long.class, result.getClass());
         
-        //instance = new ValueTypeImpl(Float.class );
         expResult = 0.0f;
         result = DocUtils.newInstance(Float.class);
         assertEquals(Float.class, result.getClass());
 
-        //instance = new ValueTypeImpl(Double.class );
         expResult = 0.0d;
         result = DocUtils.newInstance(Double.class);
         assertEquals(Double.class, result.getClass());
         
-//        instance = new ValueTypeImpl(Boolean.class );
         expResult = false;
         result = DocUtils.newInstance(Boolean.class);
         assertEquals(Boolean.class, result.getClass());
 
-//        instance = new ValueTypeImpl(Byte.class );
         expResult = "0";
         result = DocUtils.newInstance(Byte.class);
         assertEquals(Byte.class, result.getClass());
 
-//        instance = new ValueTypeImpl(Character.class );
         expResult = ' ';
         result = DocUtils.newInstance(Character.class);
         assertEquals(Character.class, result.getClass());
 
-//        instance = new ValueTypeImpl(Date.class );
         expResult = new Date();
         result = DocUtils.newInstance(Date.class);
         assertEquals(Date.class, result.getClass());
         
-        //instance = new ValueTypeImpl(java.sql.Date.class );
         expResult = new java.sql.Date(0);
         result = DocUtils.newInstance(java.sql.Date.class);
         assertEquals(java.sql.Date.class, result.getClass());
 
-//        instance = new ValueTypeImpl(java.sql.Timestamp.class );
         expResult = new java.sql.Timestamp(0);
         result = DocUtils.newInstance(java.sql.Timestamp.class);
         assertEquals(java.sql.Timestamp.class, result.getClass());
         
-//        instance = new ValueTypeImpl(Time.class );
         expResult = new Time(0);
         result = DocUtils.newInstance(Time.class);
         assertEquals(Time.class, result.getClass());
         
-//        instance = new ValueTypeImpl(BigInteger.class );
         expResult = new BigInteger("0");
         result = DocUtils.newInstance(BigInteger.class);
         assertEquals(BigInteger.class, result.getClass());
@@ -253,37 +244,30 @@ public class DocUtilsTest {
         result = DocUtils.newInstance(long.class);
         assertEquals(Long.class, result.getClass());
 
-//        instance = new ValueTypeImpl(byte.class );
         expResult = 0;
         result = DocUtils.newInstance(byte.class);
         assertEquals(Byte.class, result.getClass());
 
-//        instance = new ValueTypeImpl(float.class );
         expResult = 0;
         result = DocUtils.newInstance(float.class);
         assertEquals(Float.class, result.getClass());
 
-//        instance = new ValueTypeImpl(double.class );
         expResult = 0;
         result = DocUtils.newInstance(double.class);
         assertEquals(Double.class, result.getClass());
         
-//        instance = new ValueTypeImpl(Collection.class );
         expResult = new ArrayList();
         result = DocUtils.newInstance(ArrayList.class);
         assertEquals(ArrayList.class, result.getClass());
 
-//        instance = new ValueTypeImpl(List.class );
         expResult = new ArrayList();
         result = DocUtils.newInstance(List.class);
         assertEquals(ArrayList.class, result.getClass());
 
-//        instance = new ValueTypeImpl(Set.class );
         expResult = new HashSet();
         result = DocUtils.newInstance(Set.class);
         assertEquals(HashSet.class, result.getClass());
 
-//        instance = new ValueTypeImpl(Map.class );
         expResult = new HashMap();
         result = DocUtils.newInstance(Map.class);
         assertEquals(HashMap.class, result.getClass());
