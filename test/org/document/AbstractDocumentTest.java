@@ -41,7 +41,7 @@ public class AbstractDocumentTest {
     public void testGet() {
         System.out.println("AbstractDocument: get");
         Object key = "name";
-        AbstractDocument instance = new AbstractDocumentMock();
+        AbstractDocument<Map> instance = new AbstractDocumentMock<Map>();
         instance.put(key, "Bill Gates");
         Object expResult = "Bill Gates";
         Object result = instance.get(key);
@@ -94,11 +94,12 @@ public class AbstractDocumentTest {
     public void testCloneData() {
         System.out.println("AbstractDocument: cloneData()");
         Object key = "name";
-        AbstractDocument instance = new AbstractDocumentMock();
+        AbstractDocument<Map> instance = new AbstractDocumentMock<Map>();
         instance.put(key, "Bill Gates");
-        
-        Object result = instance.cloneData();
-        assertEquals(instance.dataMap, result);
+        Map expResult = new HashMap();
+        expResult.put(key, "Bill Gates");
+        Map result = instance.cloneData();
+        assertEquals(expResult, result);
         
         
         

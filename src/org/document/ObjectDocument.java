@@ -4,19 +4,32 @@
  */
 package org.document;
 
+import java.util.Map;
+
 /**
  *
  * @author Valery
  */
 public class ObjectDocument<T> extends AbstractDocument{
     
-    protected T javaBean;
+    protected T dataObject;
     protected DocumentSchema localSchema;
     
-    public ObjectDocument(T javaBean) {
-        assert(javaBean != null);
-        this.javaBean = javaBean;
+    public ObjectDocument(T dataObject) {
+        assert(dataObject != null);
+        this.dataObject = dataObject;
     }
+    
+    @Override
+    public Object get(Object key) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void put(Object key, Object value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     @Override
     public DocumentSchema getSchema() {
         DocumentSchema ds;
@@ -26,16 +39,27 @@ public class ObjectDocument<T> extends AbstractDocument{
         } else if (localSchema != null ) {
             ds = localSchema;
         } else {
-            localSchema = DocUtils.createSchema(javaBean.getClass()); 
+            localSchema = DocUtils.createSchema(dataObject.getClass()); 
             ds = localSchema;
         }
         
         return ds;
     }
 
-    public T getJavaBean() {
-        return javaBean;
+    public T getDataObject() {
+        return dataObject;
     }
+
+    @Override
+    protected T newDataInstance() {
+        return null;
+    }
+
+    @Override
+    protected T cloneData() {
+        return null;
+    }
+
     
     
 }

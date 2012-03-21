@@ -4,38 +4,56 @@
  */
 package org.document;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
  * @author Valery
  */
-public class AbstractDocument implements Document {
+public abstract class AbstractDocument<T> implements Document {
+
     protected DocumentGroup documentGroup;
-    protected Map dataMap = new HashMap();
+//    protected Map dataMap = new HashMap();
     protected DocumentSchema schema;
-    
-    @Override
+
+/*    @Override
     public Object get(Object key) {
+        Object value;
+        if (getSchema() != null) {
+            value = get(key, getSchema());
+        } else {
+            value = dataMap.get(key);
+        }
         return dataMap.get(key);
+    }
+
+    protected Object get(Object key, DocumentSchema schema) {
+        Object value = null;
+        Field f = schema.getField(key);
+        if (f == null) {
+            return null;
+        }
+        return value;
     }
 
     @Override
     public void put(Object key, Object value) {
         dataMap.put(key, value);
     }
-
+*/
     @Override
     public DocumentSchema getSchema() {
         return schema;
     }
+    protected abstract T newDataInstance();
 
-    protected Object newDataInstance() {
+    protected abstract T cloneData();
+/*    protected Object newDataInstance() {
         return DocUtils.newInstance(dataMap);
-    }    
+    }
+
     protected Map cloneData() {
         return DocUtils.cloneValue(dataMap);
     }
-    
+*/
 }
