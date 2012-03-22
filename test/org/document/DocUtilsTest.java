@@ -36,6 +36,17 @@ public class DocUtilsTest {
     @After
     public void tearDown() {
     }
+    
+    /**
+     * Test of getValue method, of class DocUtils.
+     */
+    @Test
+    public void testGetValue() {
+        System.out.println("DocUtils: getValue(String key,Object obj)");        
+        Person instance = new Person("Bill","Smith", new Date(), 1);
+        Object result = DocUtils.getValue("firstName", instance);
+        assertEquals("Bill",result);
+    }
     /**
      * Test of cloneValue method, of class DocUtils.
      */

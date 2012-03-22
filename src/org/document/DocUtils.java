@@ -13,6 +13,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -82,6 +84,36 @@ public class DocUtils {
         }
         return f;
     }
+    public static Object getValue(String key,Object obj) {
+        String error = "";
+        if ( obj instanceof Map ) {
+            return ((Map)obj).get(key);
+        }
+        try {
+            BeanInfo binfo = Introspector.getBeanInfo(obj.getClass(), Object.class);
+            PropertyDescriptor[] props = binfo.getPropertyDescriptors();
+            
+            for (int i = 0; i < props.length; i++) {
+                String pname = props[i].getName();
+                if ( key.equals(pname) ) {
+                    Method m = props[i].getReadMethod();
+                    Object v = m.invoke(obj, null);
+                    return v;
+                }
+
+            }//for
+
+        } catch (IntrospectionException ex) {
+            error = ex.getMessage();
+        } catch (IllegalAccessException ex) {
+            error = ex.getMessage();
+        } catch (java.lang.reflect.InvocationTargetException ex) { 
+            error = ex.getMessage();
+        }
+        
+        throw new NullPointerException("An object of type " + obj.getClass() + " doesn't contain a field with a name " + key + "(" + error + ")");
+    }
+    
     public static boolean isValueType(Class type) {
         return type.isPrimitive()
                 || type.equals(java.lang.Object.class)

@@ -13,14 +13,16 @@ import java.util.List;
  */
 public class Field {
     protected Object name;
-    protected List supportedTypes;
+    protected List<SchemaType> supportedTypes;
     protected boolean required;
     protected boolean notNull;
+    
+    protected boolean tail;
 
     public Field(Object name) {
         assert(name != null);
         this.name = name;
-        supportedTypes = new ArrayList();
+        supportedTypes = new ArrayList<SchemaType>();
         //ValueType vt = new ValueType(Object.class);
         //supportedTypes.add(vt);
     }
@@ -37,6 +39,14 @@ public class Field {
             }
         }
         */
+    }
+
+    public boolean isTail() {
+        return tail;
+    }
+
+    public void setTail(boolean tail) {
+        this.tail = tail;
     }
 
 /*    public Field(Object name,boolean required,boolean notNull) {
@@ -72,7 +82,7 @@ public class Field {
         supportedTypes.add(ref);
     }
 */
-    protected List getSupportedTypes() {
+    protected List<SchemaType> getSupportedTypes() {
         return supportedTypes;
     }
 
