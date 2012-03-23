@@ -102,7 +102,8 @@ public class DocUtilsTest {
         assertNotNull(f);
         ValueType vt = (ValueType)f.getSupportedTypes().get(0);
         assertEquals(Long.class,vt.getJavaType());
-        
+
+        DocumentSchema sc = DocUtils.createSchema(ObjectWithArray.class);        
         
     }
     

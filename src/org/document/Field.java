@@ -49,39 +49,10 @@ public class Field {
         this.tail = tail;
     }
 
-/*    public Field(Object name,boolean required,boolean notNull) {
-        this(name, required, notNull,(Class[])null);
-    }
-*/
-/*    public Field(Object name,boolean required,boolean notNull,DocumentSchema ... schema) {
-        this(name, required, notNull);
-        if ( schema != null ) {
-            for ( DocumentSchema dc : schema){
-                this.add(dc);
-            }
-        }
-    }
-*/
-
     public void add(SchemaType type) {
         supportedTypes.add(type);
     }
     
-/*    public void add(ValueType type) {
-        supportedTypes.add(type);
-    }
-
-    public void add(ArrayType type) {
-        supportedTypes.add(type);
-    }
-    
-    public void add(DocumentSchema embedded) {
-        supportedTypes.add(embedded);
-    }
-    public void add(ReferenceType ref) {
-        supportedTypes.add(ref);
-    }
-*/
     protected List<SchemaType> getSupportedTypes() {
         return supportedTypes;
     }
