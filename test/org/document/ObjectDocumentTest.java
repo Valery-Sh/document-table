@@ -210,6 +210,105 @@ public class ObjectDocumentTest {
         
         
     }
+    /**
+     * Test of getFromComponentType method, of class ObjectDocument.
+     */
+    @Test
+    public void testGetFromComponentType() {
+        System.out.println("ObjectDocument: getFromComponentType(ArrayType,Object,String[], int,DocumentSchema)");
+        ObjectWithArray owa = new ObjectWithArray();
+        Address addr1 = new Address("Michigan","Detroit", "Witherall",124, 97);
+        Address addr2 = new Address("Illinois", "Chicago","102ND",12, 7);        
+        Address[] addressArray = new Address[] {addr1,addr2};
+        
+        
+        String[] stringArray = new String[] {"str1","str2","str3"};
+        String[][] stringStringArray = new String[][] {
+            {"[0,0]","[0,1]","[0,2]"},
+            {"[1,0]","[1,1]","[1,2]"}};        
+        
+        int[] intArray = new int[] {11,22,33};
+        List l1 = new ArrayList();
+        l1.add(1);
+        l1.add("l1");
+                
+        List l2 = new ArrayList();
+        l2.add(2);
+        l2.add("l2");
+        
+        List[] listArray = new List[] {l1,l2};
+        owa.setAddressArray(addressArray);        
+        owa.setIntArray(intArray);
+        owa.setListArray(listArray);
+        owa.setStringArray(stringArray);
+        owa.setStringStringArray(stringStringArray);
+        //
+        // expected
+        //
+        ObjectWithArray expowa = new ObjectWithArray();
+        Address expaddr1 = new Address("Michigan","Detroit", "Witherall",124, 97);
+        Address expaddr2 = new Address("Illinois", "Chicago","102ND",12, 7);        
+        Address[] expaddressArray = new Address[] {expaddr1,expaddr2};
+        
+        String[] expstringArray = new String[] {"str1","str2","str3"};
+        String[][] expstringStringArray = new String[][] {
+            {"[0,0]","[0,1]","[0,2]"},
+            {"[1,0]","[1,1]","[1,2]"}};        
+
+        int[] expintArray = new int[] {11,22,33};
+        List expl1 = new ArrayList();
+        expl1.add(1);
+        expl1.add("l1");
+                
+        List expl2 = new ArrayList();
+        expl2.add(2);
+        expl2.add("l2");
+        
+        List[] explistArray = new List[] {expl1,expl2};
+        expowa.setAddressArray(expaddressArray);        
+        expowa.setIntArray(expintArray);
+        expowa.setListArray(explistArray);
+        expowa.setStringArray(expstringArray);
+        expowa.setStringStringArray(expstringStringArray);        
+        
+        ObjectDocument instance = new ObjectDocument(owa);
+        Object result = instance.get("stringArray");
+        assertEquals(String[].class,result.getClass());
+        assertArrayEquals(expstringArray,(String[])result);
+        result = instance.get("stringArray/1");
+        assertEquals("str2",result);
+        
+        result = instance.get("intArray");
+        assertEquals(int[].class,result.getClass());
+        assertArrayEquals(expintArray,(int[])result);
+        result = instance.get("intArray/1");
+        assertEquals(22,result);
+
+        result = instance.get("listArray");
+        assertEquals(List[].class,result.getClass());
+        assertArrayEquals(explistArray,(List[])result);
+        result = instance.get("listArray/1");
+        assertEquals(expl2,result);
+        
+        result = instance.get("listArray/1/0");
+        assertEquals(2,result);
+        result = instance.get("listArray/1/1");
+        assertEquals("l2",result);
+        
+        result = instance.get("addressArray/1/city");
+        assertEquals("Chicago",result);
+        
+        result = instance.get("stringStringArray/0");
+        assertEquals(String[].class,result.getClass());
+        assertArrayEquals(expstringStringArray[0],(String[])result);
+
+        result = instance.get("stringStringArray/0/1");
+        assertEquals("[0,1]",result);
+        result = instance.get("stringStringArray/1/1");
+        assertEquals("[1,1]",result);
+
+        
+    }
 
     /**
      * Test of getFromEmbedded method, of class ObjectDocument.
