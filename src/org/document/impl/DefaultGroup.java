@@ -30,6 +30,10 @@ public class DefaultGroup extends AbstractDocumentGroup {
         schemas.put(schema, schema);
 
     }
+    @Override
+    protected void addSchema(Object javaBean, DocumentSchema schema) {
+        schemas.put(javaBean.getClass(), schema);
+    }
 
     @Override
     public DocumentSchema createSchema(Class clazz) {
@@ -64,10 +68,6 @@ public class DefaultGroup extends AbstractDocumentGroup {
         return false;
     }
 
-    @Override
-    protected void addSchema(Object javaBean, DocumentSchema schema) {
-        schemas.put(javaBean.getClass(), schema);
-    }
 
     @Override
     public DocumentSchema getSchema(Document doc) {
