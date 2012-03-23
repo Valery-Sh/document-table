@@ -6,6 +6,7 @@ package org.document;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -337,6 +338,23 @@ public class ObjectDocumentTest {
         result = instance.get("list/0/1/2");
         assertEquals(12,result);
         
+       //
+       // Exceptions
+       //
+       try {
+           instance.get("stringStringArray/o");           
+           fail("Array index must be of integer type");
+       } catch(NumberFormatException e) {
+            System.out.println("Array index must be of integer type");           
+       }
+       try {
+           instance.get("stringStringArray/56");           
+           fail("Index out of bounds (value=56)");
+       } catch(IndexOutOfBoundsException e) {
+            System.out.println("Index out of bounds.");           
+       }
+       
+        
     }
 
     /**
@@ -406,6 +424,27 @@ public class ObjectDocumentTest {
         
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
+    }
+    /**
+     * Test of checkValue method, of class ObjectDocument.
+     */
+    @Test
+    public void testCheckValue() {
+        System.out.println("ObjectDocument: checkValue(Object,String)");
+        ObjectDocument instance = new ObjectDocument(new HashMap());
+        try {
+            instance.checkValue(null, "");
+            fail("The first parameter cannot be null");
+        } catch(NullPointerException e) {
+            System.out.println("The first parameter cannot be null");
+        }
+        try {
+            instance.checkValue("string value", "");
+            fail("The first parameter cannot be of ValueType");
+        } catch(IllegalArgumentException e) {
+            System.out.println("The first parameter cannot be of ValueType");
+        }
+        
     }
 
     /**
