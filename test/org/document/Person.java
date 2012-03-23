@@ -21,7 +21,10 @@ public class Person implements Serializable{
     private String lastName;
     private Date  birthDay;
     private int sex;
-    private List family;    
+    private List family;  
+
+    private List listOfList;  
+    
     //@Embedded
     
     private transient Order order;
@@ -45,6 +48,11 @@ public class Person implements Serializable{
     public Order getOrder() {
         return this.order;
     }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+    
     public Date getBirthDay() {
         return birthDay;
     }
@@ -83,6 +91,14 @@ public class Person implements Serializable{
 
     public void setFamily(List family) {
         this.family = family;
+    }
+
+    public List getListOfList() {
+        return listOfList;
+    }
+
+    public void setListOfList(List listOfList) {
+        this.listOfList = listOfList;
     }
 
     @Override

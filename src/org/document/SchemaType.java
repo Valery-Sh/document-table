@@ -10,6 +10,7 @@ package org.document;
  */
 public interface SchemaType {
     Class getJavaType();
+    
     //void addSupported(SchemaType type);
     //List<SchemaType> getSupportedTypes();
 /*    void addSupported(ValueType type);

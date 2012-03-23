@@ -5,6 +5,7 @@
 package org.document;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,9 +23,51 @@ public class ObjectDocument<T> extends AbstractDocument {
         this.dataObject = dataObject;
         tail = new HashMap();
     }
-    protected Object getFromArray(Object obj,String[] paths, int idx,DocumentSchema schema) {
+    protected Object getFromArray(ArrayType atype,Object obj,String[] paths, int idx,DocumentSchema sc) {
+        if ( obj.getClass().isArray() ) {
+            return getFromComponentType(obj, paths, idx, sc);
+        }
+        int index = 0;
+        String path = "";
+        for ( int i=0; i <= idx; i++) {
+            path += "/" + paths[i];
+        }
+        
+        try {
+            index = Integer.parseInt(paths[idx]);
+        } catch(NumberFormatException e) {
+            throw new NumberFormatException("Path '" +path + "' for ArrayType index requies integer type. " + e.getMessage() );
+        }
+        List list = (List)obj;
+        Object result;
+        try {
+            result = list.get(index);
+        } catch(IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Path '" +path + "'. index==" + index + " is greater than  list.size() == " + list.size() + ". " + e.getMessage());
+        }
+        if ( idx == paths.length - 1) {
+            return result;
+        }
+        
+        checkValue(result,path); // might throw exception 
+        
+
+        if ( DocUtils.isArrayType(result.getClass())) {
+            ArrayType t = (ArrayType)atype.getSupportedType(result.getClass());
+            result = getFromArray(t,result,paths,idx+1,sc);
+
+        } else if ( DocUtils.isEmbeddedType(result.getClass())) {
+            EmbeddedType t = (EmbeddedType)atype.getSupportedType(result.getClass());
+            DocumentSchema sc1 = t.getSchema();
+            result = getFromEmbedded(result,paths,idx+1,sc1);
+        }   
+
+        return result;
+    }
+    protected Object getFromComponentType(Object obj,String[] paths, int idx,DocumentSchema schema) {
         return null;
     }
+    
     protected Object getFromEmbedded(Object obj,String[] paths, int idx,DocumentSchema sc) {
         Field f = sc.getField(paths[idx]);
         String path = "";
@@ -47,15 +90,27 @@ public class ObjectDocument<T> extends AbstractDocument {
         }
 
         if ( DocUtils.isValueType(result.getClass())) {
-            throw new IllegalArgumentException("Path '" + path + "': requirs ValueType");
+            throw new IllegalArgumentException("Path '" + path + "': requires ValueType");
         }
         if ( DocUtils.isArrayType(result.getClass())) {
-            result = getFromArray(result,paths,idx+1,sc);
+            result = getFromArray((ArrayType)getSupportedType(f),result,paths,idx+1,sc);
         } else {
             DocumentSchema sc1 = ((EmbeddedType)getSupportedType(f)).getSchema();
             result = getFromEmbedded(result,paths,idx+1,sc1);
         }   
         return result;
+        
+    }
+    protected void checkValue(Object obj,String path) {
+        
+        if ( obj == null) {
+            throw new NullPointerException("Null value for key path '" + path + "'");            
+        }
+
+        if ( DocUtils.isValueType(obj.getClass())) {
+            throw new IllegalArgumentException("Path '" + path + "': requires ValueType");
+        }
+        
         
     }
     protected SchemaType getSupportedType(Field f) {
@@ -71,7 +126,11 @@ public class ObjectDocument<T> extends AbstractDocument {
     }
 
     protected String[] split(String key, char dlm) {
-        String[] result = key.split(String.valueOf(dlm));
+        String k = key.trim();
+        if ( (!k.isEmpty()) && key.charAt(0) == dlm ) {
+            k = key.substring(1);
+        }
+        String[] result = k.split(String.valueOf(dlm));
         for (int i = 0; i < result.length; i++) {
             result[i] = result[i].trim();
         }

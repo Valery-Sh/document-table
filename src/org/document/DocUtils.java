@@ -140,6 +140,11 @@ public class DocUtils {
 
     }
 
+    public static boolean isEmbeddedType(Class type) {
+        return  ! ( isArrayType(type) || isValueType(type));
+
+    }
+    
     
     public static <T> T cloneValue(T value) {
         if (value == null) {
