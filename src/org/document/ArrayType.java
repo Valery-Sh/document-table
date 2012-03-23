@@ -71,7 +71,7 @@ public class ArrayType implements SchemaType {
     public SchemaType getSupportedType(Class type) {
         SchemaType result = null;
         for (SchemaType st : getSupportedTypes()) {
-            if (st.getJavaType().equals(type)) {
+            if (st.getJavaType().isAssignableFrom(type)) {
                 result = st;
                 break;
             }
@@ -83,7 +83,7 @@ public class ArrayType implements SchemaType {
                 if ( ! type.isArray() ) {
                     result = new ArrayType(type);
                 } else {
-                    //TODO
+                    result = new ComponentType(type);
                 }
             } else if ( DocUtils.isEmbeddedType(type)) {
                 DocumentSchema ds = DocUtils.createSchema(type);

@@ -34,6 +34,19 @@ public class ComponentType extends ArrayType {
     }
 
     @Override
+     public SchemaType getSupportedType(Class type) {
+        SchemaType result = null;
+        for (SchemaType st : getSupportedTypes()) {
+            if (st.getJavaType().isAssignableFrom(type)) {
+                result = st;
+                break;
+            }
+        }
+        return result;
+    }
+
+    
+    @Override
     public boolean isComponentType() {
         return true;
     }

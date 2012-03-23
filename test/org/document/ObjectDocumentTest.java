@@ -237,11 +237,18 @@ public class ObjectDocumentTest {
         l2.add("l2");
         
         List[] listArray = new List[] {l1,l2};
+        
+        
+        List list = new ArrayList();
+        int[][] intIntArray = new int[][] {{0,1,2},{10,11,12}};
+        list.add(intIntArray);
+        
         owa.setAddressArray(addressArray);        
         owa.setIntArray(intArray);
         owa.setListArray(listArray);
         owa.setStringArray(stringArray);
         owa.setStringStringArray(stringStringArray);
+        owa.setList(list);
         //
         // expected
         //
@@ -265,11 +272,18 @@ public class ObjectDocumentTest {
         expl2.add("l2");
         
         List[] explistArray = new List[] {expl1,expl2};
+
+        int[][] expintIntArray = new int[][] {{0,1,2},{10,11,12}};
+        
+        List explist = new ArrayList();
+        explist.add(expintIntArray);
+        
         expowa.setAddressArray(expaddressArray);        
         expowa.setIntArray(expintArray);
         expowa.setListArray(explistArray);
         expowa.setStringArray(expstringArray);
         expowa.setStringStringArray(expstringStringArray);        
+        expowa.setList(explist);
         
         ObjectDocument instance = new ObjectDocument(owa);
         Object result = instance.get("stringArray");
@@ -307,6 +321,21 @@ public class ObjectDocumentTest {
         result = instance.get("stringStringArray/1/1");
         assertEquals("[1,1]",result);
 
+        result = instance.get("list");
+        assertTrue(result instanceof List);
+        assertEquals(1,((List)result).size());
+        assertTrue(((List)result).get(0) instanceof int[][]);
+
+        
+        result = instance.get("list/0");
+        assertArrayEquals(expintIntArray,(int[][])result);
+        result = instance.get("list/0/0");
+        assertArrayEquals(expintIntArray[0],(int[])result);
+        result = instance.get("list/0/1");
+        assertArrayEquals(expintIntArray[1],(int[])result);
+        
+        result = instance.get("list/0/1/2");
+        assertEquals(12,result);
         
     }
 
