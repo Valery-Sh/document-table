@@ -358,11 +358,6 @@ public class ObjectDocumentTest {
         expResult = 125L;
         result = instance.getFromEmbedded(obj, paths, idx, sc);
         assertEquals(expResult, result);
-        
-        
-        
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
     /**
      * Test of checkValue method, of class ObjectDocument.
@@ -383,7 +378,6 @@ public class ObjectDocumentTest {
         } catch(IllegalArgumentException e) {
             System.out.println("The first parameter cannot be of ValueType");
         }
-        
     }
 
     /**

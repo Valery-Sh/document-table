@@ -147,9 +147,8 @@ public class ObjectDocument<T> extends AbstractDocument {
         if ( DocUtils.isValueType(obj.getClass())) {
             throw new IllegalArgumentException("Path '" + path + "': requires ValueType");
         }
-        
-        
     }
+    
     protected SchemaType getSupportedType(Field f) {
         return f.getSupportedTypes().get(0);
     }
