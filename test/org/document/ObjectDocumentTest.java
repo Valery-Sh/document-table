@@ -47,11 +47,8 @@ public class ObjectDocumentTest {
         
         ObjectDocument instance = new ObjectDocument(person);
         
-        Object obj = instance.getDataObject();
-        String[] paths = new String[] {"firstName"};
-        int idx = 0;
-        DocumentSchema sc = instance.getSchema();
-        Object expResult = null;
+        
+        Object expResult;
         Object result = instance.get("family");
         assertNull(result);
         List family = new ArrayList();
@@ -136,6 +133,7 @@ public class ObjectDocumentTest {
         assertEquals(expList1,result);
         result = instance.get("listOfList/1");
         assertEquals(expList2,result);
+        
         // Now listOfList.size=3:
         // elem0 := ["list1",123]
         // elem1 := [321,"Bill"]
@@ -152,6 +150,7 @@ public class ObjectDocumentTest {
         List list2_1 = new ArrayList();
         list2_1.add("list2_1");
         list2.add(list2_1);
+        
         // Now listOfList.size=3:
         // elem0 := ["list1",123]
         // elem1 := [321,"Bill",["list2_1"]]
@@ -159,6 +158,7 @@ public class ObjectDocumentTest {
         List expList2_1 = new ArrayList();
         expList2_1.add("list2_1");
         expList2.add(expList2_1);
+        
         // Now listOfList.size=4:
         // elem0 := ["list1",123]
         // elem1 := [321,"Bill",["list2_1"]]

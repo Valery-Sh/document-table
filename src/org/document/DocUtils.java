@@ -13,7 +13,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -25,7 +24,17 @@ import org.document.impl.DefaultSchema;
  * @author Valery
  */
 public class DocUtils {
-
+    public static int getFieldCount(Class type) {
+        int count = 0;
+        try {
+            BeanInfo binfo = Introspector.getBeanInfo(type, Object.class);
+            PropertyDescriptor[] props = binfo.getPropertyDescriptors();
+            count = props.length;
+        } catch (IntrospectionException ex) {
+        }
+        
+        return count;
+    }
     public static <K, V> DocumentSchema createSchema(Map<String, V> map) {
         DocumentSchema schema = new DefaultSchema();
         for (Map.Entry<String, V> mt : map.entrySet()) {

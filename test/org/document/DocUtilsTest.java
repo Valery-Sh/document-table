@@ -52,7 +52,7 @@ public class DocUtilsTest {
      */
     @Test
     public void testCreateSchema() {
-        int elemCount = 6;
+        int elemCount = DocUtils.getFieldCount(Person.class);
         System.out.println("DocUtils: createSchema(Class)");        
         DocumentSchema schema = DocUtils.createSchema(Person.class);
         assertEquals(elemCount,schema.getFields().size());
@@ -96,7 +96,7 @@ public class DocUtilsTest {
         
         assertNotNull(embschema);
         assertEquals(Order.class,embschema.getMappingType());
-        assertEquals(1,embschema.getFields().size());
+        assertEquals(DocUtils.getFieldCount(Order.class),embschema.getFields().size());
         
         f = embschema.getField("orderNum");
         assertNotNull(f);

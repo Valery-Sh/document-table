@@ -76,7 +76,7 @@ public class ArrayType implements SchemaType {
                 break;
             }
         }
-        if ( result == null ) {
+        if ( result == null && getSupportedTypes().isEmpty() ) {
             if ( DocUtils.isValueType(type)) {
                 result = new ValueType(type);
             } else if ( DocUtils.isArrayType(type)) {

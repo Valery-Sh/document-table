@@ -4,6 +4,7 @@
  */
 package org.document;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class ObjectDocument<T> extends AbstractDocument {
     }
     protected Object getFromArray(ArrayType atype,Object obj,String[] paths, int idx,DocumentSchema sc) {
         if ( obj.getClass().isArray() ) {
-            return getFromComponentType(obj, paths, idx, sc);
+            return getFromComponentType(atype,obj, paths, idx, sc);
         }
         int index = 0;
         String path = "";
@@ -64,8 +65,44 @@ public class ObjectDocument<T> extends AbstractDocument {
 
         return result;
     }
-    protected Object getFromComponentType(Object obj,String[] paths, int idx,DocumentSchema schema) {
-        return null;
+    protected Object getFromComponentType(ArrayType atype,Object obj,String[] paths, int idx,DocumentSchema sc) {
+        int index = 0;
+        String path = "";
+        for ( int i=0; i <= idx; i++) {
+            path += "/" + paths[i];
+        }
+        
+        try {
+            index = Integer.parseInt(paths[idx]);
+        } catch(NumberFormatException e) {
+            throw new NumberFormatException("Path '" +path + "' for ArrayType index requies integer type. " + e.getMessage() );
+        }
+        
+        Object result;
+        try {
+            result = Array.get(obj,index);
+        } catch(IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Path '" + path + "'. index==" + index + ". " + e.getMessage());
+        }
+        if ( idx == paths.length - 1) {
+            return result;
+        }
+        
+        checkValue(result,path); // might throw exception 
+        
+
+        if ( DocUtils.isArrayType(result.getClass())) {
+            ArrayType t = (ArrayType)atype.getSupportedType(result.getClass());
+            result = getFromArray(t,result,paths,idx+1,sc);
+
+        } else if ( DocUtils.isEmbeddedType(result.getClass())) {
+            EmbeddedType t = (EmbeddedType)atype.getSupportedType(result.getClass());
+            DocumentSchema sc1 = t.getSchema();
+            result = getFromEmbedded(result,paths,idx+1,sc1);
+        }   
+
+        return result;
+
     }
     
     protected Object getFromEmbedded(Object obj,String[] paths, int idx,DocumentSchema sc) {
