@@ -62,4 +62,5 @@ public class ComponentType extends ArrayType {
         
         return sz;
     }
+    
 }//ComponentType

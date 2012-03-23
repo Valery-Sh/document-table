@@ -17,4 +17,26 @@ public class ReferenceType  implements SchemaType {
         return javaType;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ReferenceType other = (ReferenceType) obj;
+        if (this.javaType != other.javaType && (this.javaType == null || !this.javaType.equals(other.javaType))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + (this.javaType != null ? this.javaType.hashCode() : 0);
+        return hash;
+    }
+
 }

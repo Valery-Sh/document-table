@@ -44,5 +44,32 @@ public class DefaultSchema implements DocumentSchema{
         }
         return null;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultSchema other = (DefaultSchema) obj;
+        if (this.mappingType != other.mappingType && (this.mappingType == null || !this.mappingType.equals(other.mappingType))) {
+            return false;
+        }
+        if (this.fields != other.fields && (this.fields == null || !this.fields.equals(other.fields))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + (this.mappingType != null ? this.mappingType.hashCode() : 0);
+        hash = 23 * hash + (this.fields != null ? this.fields.hashCode() : 0);
+        return hash;
+    }
+
     
 }

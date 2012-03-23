@@ -105,5 +105,43 @@ public class Field {
     public void setRequired(boolean required) {
         this.required = required;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Field other = (Field) obj;
+        if (this.name != other.name && (this.name == null || !this.name.equals(other.name))) {
+            return false;
+        }
+        if (this.supportedTypes != other.supportedTypes && (this.supportedTypes == null || !this.supportedTypes.equals(other.supportedTypes))) {
+            return false;
+        }
+        if (this.required != other.required) {
+            return false;
+        }
+        if (this.notNull != other.notNull) {
+            return false;
+        }
+        if (this.tail != other.tail) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 97 * hash + (this.supportedTypes != null ? this.supportedTypes.hashCode() : 0);
+        hash = 97 * hash + (this.required ? 1 : 0);
+        hash = 97 * hash + (this.notNull ? 1 : 0);
+        hash = 97 * hash + (this.tail ? 1 : 0);
+        return hash;
+    }
     
 }

@@ -49,4 +49,30 @@ public class ValueType implements SchemaType{
         this.defaultValue = value;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ValueType other = (ValueType) obj;
+        if (this.javaType != other.javaType && (this.javaType == null || !this.javaType.equals(other.javaType))) {
+            return false;
+        }
+        if (this.defaultValue != other.defaultValue && (this.defaultValue == null || !this.defaultValue.equals(other.defaultValue))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.javaType != null ? this.javaType.hashCode() : 0);
+        hash = 67 * hash + (this.defaultValue != null ? this.defaultValue.hashCode() : 0);
+        return hash;
+    }
+
 }

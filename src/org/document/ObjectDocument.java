@@ -22,39 +22,41 @@ public class ObjectDocument<T> extends AbstractDocument {
         this.dataObject = dataObject;
         tail = new HashMap();
     }
-
-    protected Object getEmbedded(String key, Object obj, DocumentSchema schema, String path) {
+    protected Object getFromArray(Object obj,String[] paths, int idx,DocumentSchema schema) {
         return null;
     }
-    protected boolean checkPaths(String[] paths) {
-        boolean b = true;
+    protected Object getFromEmbedded(Object obj,String[] paths, int idx,DocumentSchema sc) {
+        Field f = sc.getField(paths[idx]);
+        String path = "";
+        for ( int i=0; i <= idx; i++) {
+            path += "/" + paths[i];
+        }
         
-        return b;
-    }
-    
-    private void checkPaths(String[] paths, int start,DocumentSchema sc) {
-        Field f = sc.getField(paths[start]);
-        if ( f == null ) {
-           throw new IllegalArgumentException("The field with a name '" + paths[start]+"' doesn't exist");
+        if (f == null) {
+            throw new NullPointerException("A schema doesn't contain a field for key = " + path );
         }
-        SchemaType st = getSupportedType(f);
-        if ( st instanceof ValueType && start < paths.length - 1  ) {
-            throw new IllegalArgumentException("Too long path for a ValueType");
-        } else if ( st instanceof ValueType ) {
-            return;
-        } else if ( st instanceof ArrayType ) {
-            if ( start == paths.length - 1) {
-                return;
-            }
-            if ( start < paths.length - 1) {
-                throw new IllegalArgumentException("Too long path for aa ArrayType");
-            }
-            try {
-                Integer.parseInt(paths[start]);
-            } catch(NumberFormatException e) {
-                throw new NumberFormatException("ArrayType: " + e.getMessage());
-            }
+        String nm = paths[idx];
+        Object result = DocUtils.getValue(nm, obj);
+        
+        if ( idx == paths.length - 1) {
+            return result;
         }
+        
+        if ( result == null) {
+            throw new NullPointerException("Null value for key path '" + path + "'");            
+        }
+
+        if ( DocUtils.isValueType(result.getClass())) {
+            throw new IllegalArgumentException("Path '" + path + "': requirs ValueType");
+        }
+        if ( DocUtils.isArrayType(result.getClass())) {
+            result = getFromArray(result,paths,idx+1,sc);
+        } else {
+            DocumentSchema sc1 = ((EmbeddedType)getSupportedType(f)).getSchema();
+            result = getFromEmbedded(result,paths,idx+1,sc1);
+        }   
+        return result;
+        
     }
     protected SchemaType getSupportedType(Field f) {
         return f.getSupportedTypes().get(0);
@@ -65,39 +67,7 @@ public class ObjectDocument<T> extends AbstractDocument {
             return null;
         }
         String[] paths = split(key.toString(), '/');
-        DocumentSchema sc = getSchema();
-        Object value = getDataObject();
-        for (int i = 0; i < paths.length; i++) {
-            String sub = "";
-            for (int n = 0; n <= i; n++) {
-                sub += "/" + paths[n];
-            }
-            //Object value = getEmbedded(paths[i],o,sc,sub);
-        }
-        int i = 0;
-        Field f = getSchema().getField(paths[0]);
-        if (f == null) {
-            throw new NullPointerException("A schema doesn't contain a field for key = " + key);
-        }
-        Object result;
-        if (f.isTail()) {
-            result = tail.get(key);
-        } else {
-            result = DocUtils.getValue(key.toString(), dataObject);
-        }
-        if (result == null && i < paths.length - 1) {
-            throw new NullPointerException("Null value for key path '" + sub + "'");
-        } else if (result == null) {
-            return null;
-        }
-        if (DocUtils.isValueType(result.getClass())) {
-            if (i < paths.length - 1) {
-                throw new IllegalArgumentException("Path '" + sub + "': required array or embedded but found value type");
-            }
-        }
-        for (int i = 0; i < paths.length; i++) {
-        }
-        return result;
+        return getFromEmbedded(getDataObject(), paths, 0, getSchema());
     }
 
     protected String[] split(String key, char dlm) {

@@ -77,6 +77,36 @@ public class ArrayType  implements SchemaType{
     public void setDefaultValue(List value) {
         this.defaultValue = value;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ArrayType other = (ArrayType) obj;
+        if (this.defaultValue != other.defaultValue && (this.defaultValue == null || !this.defaultValue.equals(other.defaultValue))) {
+            return false;
+        }
+        if (this.supportedTypes != other.supportedTypes && (this.supportedTypes == null || !this.supportedTypes.equals(other.supportedTypes))) {
+            return false;
+        }
+        if (this.javaType != other.javaType && (this.javaType == null || !this.javaType.equals(other.javaType))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 61 * hash + (this.defaultValue != null ? this.defaultValue.hashCode() : 0);
+        hash = 61 * hash + (this.supportedTypes != null ? this.supportedTypes.hashCode() : 0);
+        hash = 61 * hash + (this.javaType != null ? this.javaType.hashCode() : 0);
+        return hash;
+    }
     
     
 }
