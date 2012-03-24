@@ -26,6 +26,17 @@ public class DocumentVisitor {
 
     }
 
+    public DocumentVisitor(String ... keys) {
+        this.key = "";
+        for ( int i=0; i < keys.length;i++) {
+            key += keys[i] + "/";
+        }
+        this.paths = keys;
+        //paths = split(key,'/');
+        infoList = new ArrayList<VisitorInfo>();
+
+    }
+    
     protected String[] split(String key, char dlm) {
         String k = key.trim();
         if ((!k.isEmpty()) && key.charAt(0) == dlm) {
@@ -41,14 +52,15 @@ public class DocumentVisitor {
     public void visitDocument(Document doc) {
         this.rootDoc = doc;
         paths = split(key, '/');
-        VisitorInfo info = new VisitorInfo(doc);
-        infoList.add(info);
+        //VisitorInfo info = new VisitorInfo(doc);
+        //infoList.add(info);
         Field f = doc.getSchema().getField(paths[0]);
         if (f.isTail()) {
             //return getFromEmbedded(tail, paths, 0, getSchema());
             visitEmbedded(new EmbeddedType(doc.getSchema()), ((ObjectDocument) doc).tail);
+        } else {
+            visitEmbedded(new EmbeddedType(doc.getSchema()), ((ObjectDocument) doc).getDataObject());
         }
-        visitEmbedded(new EmbeddedType(doc.getSchema()), ((ObjectDocument) doc).getDataObject());
         //return getFromEmbedded(doc.getDataObject(), paths, 0, getSchema());
 
 
@@ -112,7 +124,7 @@ public class DocumentVisitor {
         infoList.add(info);
         int idx = infoList.size() - 1;
                 
-        int index = 0;
+        int index;
         String path = "";
         
         for (int i = 0; i <= idx; i++) {
@@ -176,7 +188,7 @@ public class DocumentVisitor {
         infoList.add(info);
         int idx = infoList.size() - 1;
                 
-        int index = 0;
+        int index;
         String path = "";
         
         for (int i = 0; i <= idx; i++) {
@@ -232,6 +244,17 @@ public class DocumentVisitor {
         }
 
         
+    }
+    
+    public VisitorInfo getInfo(int idx) {
+        return this.infoList.get(idx);
+    }
+    
+    public Object getResult() {
+        return this.infoList.get(infoList.size()-1).getResult();
+    }
+    public Exception getException() {
+        return this.infoList.get(infoList.size()-1).getException();
     }
     
     public static class VisitorInfo {

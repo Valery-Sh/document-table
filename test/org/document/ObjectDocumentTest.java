@@ -39,7 +39,7 @@ public class ObjectDocumentTest {
     /**
      * Test of getFromArray method, of class ObjectDocument.
      */
-    @Test
+/*    @Test
     public void testGetFromArray() {
         System.out.println("ObjectDocument: getFromArray(ArrayType,Object,String[], int,DocumentSchema)");
         Person person = new Person("Bill","Smith", new Date(), 1);
@@ -218,6 +218,7 @@ public class ObjectDocumentTest {
         
         
     }
+    */
     /**
      * Test of getFromComponentType method, of class ObjectDocument.
      */

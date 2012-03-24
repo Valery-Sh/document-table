@@ -167,8 +167,8 @@ public class ObjectDocument<T> extends AbstractDocument {
         return f.getSupportedTypes().get(0);
     }
 
-    @Override
-    public Object get(Object key) {
+    //@Override
+    public Object getOLD(Object key) {
         if (key == null || (key.toString().trim().isEmpty())) {
             return null;
         }
@@ -182,6 +182,23 @@ public class ObjectDocument<T> extends AbstractDocument {
         return getFromEmbedded(getDataObject(), paths, 0, getSchema());
     }
 
+    @Override
+    public Object get(Object key) {
+        if (key == null || (key.toString().trim().isEmpty())) {
+            return null;
+        }
+        String[] paths = split(key.toString(), '/');
+        // Me must keep in mind that a field may be in 'tail'
+        Field f = getSchema().getField(paths[0]);
+        DocumentVisitor visitor = new DocumentVisitor(key.toString());
+        visitor.visitDocument(this);
+        if ( visitor.getException() != null ) {
+            RuntimeException re = (RuntimeException)visitor.getException();
+            throw re;
+        }
+        return visitor.getResult();
+    }
+    
     
     protected String[] split(String key, char dlm) {
         String k = key.trim();
