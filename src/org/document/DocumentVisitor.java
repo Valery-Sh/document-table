@@ -36,6 +36,55 @@ public class DocumentVisitor {
         infoList = new ArrayList<VisitorInfo>();
 
     }
+
+    public void continueVisit(String ... addKeys) {
+        this.key = "";
+        String[] newkeys = new String[paths.length + addKeys.length];
+        System.arraycopy(paths, 0, newkeys, 0, paths.length);
+        System.arraycopy(addKeys, 0, newkeys, paths.length, addKeys.length);
+        
+        this.paths = newkeys;
+        for ( int i=0; i < paths.length;i++) {
+            key += paths[i] + "/";
+        }
+        VisitorInfo info = this.getInfo();
+        Object result = info.getResult();
+        int idx = infoList.size()-1;
+        String path = "";
+        
+        for (int i = 0; i <= idx; i++) {
+            path += "/" + paths[i];
+        }
+        
+        if (result == null) {
+            info.setException(new NullPointerException("Null value for key path '" + path + "'"));
+            return;
+        }
+
+        if (DocUtils.isValueType(result.getClass())) {
+            info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));            
+            return;
+        }
+        SchemaType st;
+        if (info.getSchemaType() instanceof ArrayType ) {
+            st = ((ArrayType)info.getSchemaType()).getSupportedType(result.getClass());
+        } else if (info.getSchemaType() instanceof ComponentType ) {
+            st = ((ComponentType)info.getSchemaType()).getSupportedType(result.getClass());
+        } else {
+            String nm = paths[infoList.size()-1];
+            Field f = ((EmbeddedType)info.getSchemaType()).getSchema().getField(nm);
+            st = f.getSupportedTypes().get(0);
+        }
+        
+        if (DocUtils.isArrayType(result.getClass())) {
+            visitArray((ArrayType)st, result);
+        } else if (DocUtils.isComponentType(result.getClass())) {
+            visitComponent((ComponentType)st, result);            
+        } else {
+            visitEmbedded((EmbeddedType)st,result);
+        }
+        
+    }
     
     protected String[] split(String key, char dlm) {
         String k = key.trim();
@@ -93,31 +142,22 @@ public class DocumentVisitor {
         if (result == null) {
             info.setException(new NullPointerException("Null value for key path '" + path + "'"));
             return;
-            //throw new NullPointerException("Null value for key path '" + path + "'");
         }
 
         if (DocUtils.isValueType(result.getClass())) {
             info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));            
             return;
-            //throw new IllegalArgumentException("Path '" + path + "': requires ValueType");
         }
+        
+        SchemaType st = f.getSupportedTypes().get(0);
+        
         if (DocUtils.isArrayType(result.getClass())) {
-            SchemaType st = ((ObjectDocument)rootDoc).getSupportedType(f);
             visitArray((ArrayType)st, result);
-            //result = getFromArray((ArrayType)st, result, paths, idx + 1, sc);
         } else if (DocUtils.isComponentType(result.getClass())) {
-            SchemaType st = ((ObjectDocument)rootDoc).getSupportedType(f);            
             visitComponent((ComponentType)st, result);            
-            //result = getFromComponentType((ComponentType) getSupportedType(f), result, paths, idx + 1, sc);
         } else {
-            SchemaType st = ((ObjectDocument)rootDoc).getSupportedType(f);
             visitEmbedded((EmbeddedType)st,result);
-            //DocumentSchema sc1 = ((EmbeddedType) getSupportedType(f)).getSchema();
-            //result = getFromEmbedded(result, paths, idx + 1, sc1);
         }
-        //return result;
-
-
     }
     public void visitArray(ArrayType arrayType, Object sourceObject) {
         VisitorInfo info = new VisitorInfo(arrayType, sourceObject);
@@ -177,8 +217,6 @@ public class DocumentVisitor {
         } else if (DocUtils.isEmbeddedType(result.getClass())) {
             EmbeddedType t = (EmbeddedType) arrayType.getSupportedType(result.getClass());
             visitEmbedded(t,result);
-//            DocumentSchema sc1 = t.getSchema();
-//            result = getFromEmbedded(result, paths, idx + 1, sc1);
         }
         
         
@@ -199,7 +237,6 @@ public class DocumentVisitor {
         } catch (NumberFormatException e) {
             info.setException(new NumberFormatException("Path '" + path + "' for ArrayType index requies integer type. " + e.getMessage()));
             return;
-            //throw new NumberFormatException("Path '" + path + "' for ArrayType index requies integer type. " + e.getMessage());
         }
 
         Object result;
@@ -217,30 +254,22 @@ public class DocumentVisitor {
         if (result == null) {
             info.setException(new NullPointerException("Null value for key path '" + path + "'"));
             return;
-            //throw new NullPointerException("Null value for key path '" + path + "'");
         }
 
         if (DocUtils.isValueType(result.getClass())) {
             info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));
             return;
-            //throw new IllegalArgumentException("Path '" + path + "': requires ValueType");
         }
 
         if (DocUtils.isArrayType(result.getClass())) {
             ArrayType t = (ArrayType) componentType.getSupportedType(result.getClass());
             visitArray(t, result);
-            //result = getFromArray(t, result, paths, idx + 1, sc);
-
         } else if (DocUtils.isComponentType(result.getClass())) {
             ComponentType t = (ComponentType) componentType.getSupportedType(result.getClass());
             visitComponent(t, result);            
-            //result = getFromComponentType(t, result, paths, idx + 1, sc);
-
         } else if (DocUtils.isEmbeddedType(result.getClass())) {
             EmbeddedType t = (EmbeddedType) componentType.getSupportedType(result.getClass());
             visitEmbedded(t,result);
-//            DocumentSchema sc1 = t.getSchema();
-//            result = getFromEmbedded(result, paths, idx + 1, sc1);
         }
 
         
@@ -248,6 +277,9 @@ public class DocumentVisitor {
     
     public VisitorInfo getInfo(int idx) {
         return this.infoList.get(idx);
+    }
+    public VisitorInfo getInfo() {
+        return this.infoList.get(infoList.size()-1);
     }
     
     public Object getResult() {

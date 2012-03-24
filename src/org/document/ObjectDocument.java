@@ -25,7 +25,7 @@ public class ObjectDocument<T> extends AbstractDocument {
         tail = new HashMap();
     }
 
-    protected Object getFromArray(ArrayType atype, Object obj, String[] paths, int idx, DocumentSchema sc) {
+/*    protected Object getFromArray(ArrayType atype, Object obj, String[] paths, int idx, DocumentSchema sc) {
 
         int index = 0;
         String path = "";
@@ -162,13 +162,13 @@ public class ObjectDocument<T> extends AbstractDocument {
             throw new IllegalArgumentException("Path '" + path + "': requires ValueType");
         }
     }
-
+*/
     protected SchemaType getSupportedType(Field f) {
         return f.getSupportedTypes().get(0);
     }
 
     //@Override
-    public Object getOLD(Object key) {
+  /*  public Object getOLD(Object key) {
         if (key == null || (key.toString().trim().isEmpty())) {
             return null;
         }
@@ -181,7 +181,7 @@ public class ObjectDocument<T> extends AbstractDocument {
 
         return getFromEmbedded(getDataObject(), paths, 0, getSchema());
     }
-
+*/
     @Override
     public Object get(Object key) {
         if (key == null || (key.toString().trim().isEmpty())) {
@@ -211,46 +211,7 @@ public class ObjectDocument<T> extends AbstractDocument {
         }
         return result;
     }
-
-    @Override
-    public void put(Object key, Object value) {
-        if (key == null || (key.toString().trim().isEmpty())) {
-            throw new NullPointerException("ObjectDocument.put(null, ..)");
-        }
-        String[] paths = split(key.toString(), '/');
-        // Me must keep in mind that a field may be in 'tail'
-        Field f = getSchema().getField(paths[0]);
-        if (f.isTail()) {
-            putToEmbedded(tail, paths, 0, getSchema());
-        }
-        putToEmbedded(getDataObject(), paths, 0, getSchema());
-
-    }
-
-    protected void putToEmbedded(Object obj, String[] paths, int idx, DocumentSchema sc) {
-        Field f = sc.getField(paths[idx]);
-        String path = "";
-        for (int i = 0; i <= idx; i++) {
-            path += "/" + paths[i];
-        }
-
-        if (f == null) {
-            throw new NullPointerException("A schema doesn't contain a field for key = " + path);
-        }
-        String nm = paths[idx];
-        /*
-         * if ( DocUtils.isValueType(result.getClass())) { throw new
-         * IllegalArgumentException("Path '" + path + "': requires ValueType");
-         * } if ( DocUtils.isArrayType(result.getClass())) { result =
-         * getFromArray((ArrayType)getSupportedType(f),result,paths,idx+1,sc); }
-         * else if ( DocUtils.isComponentType(result.getClass())) { result =
-         * getFromComponentType((ComponentType)getSupportedType(f),result,paths,idx+1,sc);
-         * } else { DocumentSchema sc1 =
-         * ((EmbeddedType)getSupportedType(f)).getSchema(); result =
-         * getFromEmbedded(result,paths,idx+1,sc1); } return result;
-         */
-    }
-
+    
     @Override
     public DocumentSchema getSchema() {
         DocumentSchema ds;
@@ -279,6 +240,11 @@ public class ObjectDocument<T> extends AbstractDocument {
     @Override
     protected T cloneData() {
         return null;
+    }
+
+    @Override
+    public void put(Object key, Object value) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

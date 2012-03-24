@@ -48,4 +48,5 @@ public class EmbeddedType implements SchemaType{
         return hash;
     }
 
+
 }
