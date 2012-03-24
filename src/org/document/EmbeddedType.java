@@ -4,8 +4,6 @@
  */
 package org.document;
 
-import java.util.List;
-
 /**
  *
  * @author Valery

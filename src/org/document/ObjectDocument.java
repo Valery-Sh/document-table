@@ -24,142 +24,149 @@ public class ObjectDocument<T> extends AbstractDocument {
         this.dataObject = dataObject;
         tail = new HashMap();
     }
-    protected Object getFromArray(ArrayType atype,Object obj,String[] paths, int idx,DocumentSchema sc) {
+
+    protected Object getFromArray(ArrayType atype, Object obj, String[] paths, int idx, DocumentSchema sc) {
 
         int index = 0;
         String path = "";
-        for ( int i=0; i <= idx; i++) {
+        for (int i = 0; i <= idx; i++) {
             path += "/" + paths[i];
         }
-        
+
         try {
             index = Integer.parseInt(paths[idx]);
-        } catch(NumberFormatException e) {
-            throw new NumberFormatException("Path '" +path + "' for ArrayType index requies integer type. " + e.getMessage() );
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Path '" + path + "' for ArrayType index requies integer type. " + e.getMessage());
         }
-        List list = (List)obj;
+        List list = (List) obj;
         Object result;
         try {
             result = list.get(index);
-        } catch(IndexOutOfBoundsException e) {
-            throw new IndexOutOfBoundsException("Path '" +path + "'. index==" + index + " is greater than  list.size() == " + list.size() + ". " + e.getMessage());
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Path '" + path + "'. index==" + index + " is greater than  list.size() == " + list.size() + ". " + e.getMessage());
         }
-        if ( idx == paths.length - 1) {
+        if (idx == paths.length - 1) {
             return result;
         }
-        
-        checkValue(result,path); // might throw exception 
-        
 
-        if ( DocUtils.isArrayType(result.getClass())) {
-            ArrayType t = (ArrayType)atype.getSupportedType(result.getClass());
-            result = getFromArray(t,result,paths,idx+1,sc);
+        checkValue(result, path); // might throw exception 
 
-        } else if ( DocUtils.isComponentType(result.getClass())) {
-            ComponentType t = (ComponentType)atype.getSupportedType(result.getClass());
-            result = getFromComponentType(t,result,paths,idx+1,sc);
 
-        }  else if ( DocUtils.isEmbeddedType(result.getClass())) {
-            EmbeddedType t = (EmbeddedType)atype.getSupportedType(result.getClass());
+        if (DocUtils.isArrayType(result.getClass())) {
+            ArrayType t = (ArrayType) atype.getSupportedType(result.getClass());
+            result = getFromArray(t, result, paths, idx + 1, sc);
+
+        } else if (DocUtils.isComponentType(result.getClass())) {
+            ComponentType t = (ComponentType) atype.getSupportedType(result.getClass());
+            result = getFromComponentType(t, result, paths, idx + 1, sc);
+
+        } else if (DocUtils.isEmbeddedType(result.getClass())) {
+            EmbeddedType t = (EmbeddedType) atype.getSupportedType(result.getClass());
             DocumentSchema sc1 = t.getSchema();
-            result = getFromEmbedded(result,paths,idx+1,sc1);
-        }   
+            result = getFromEmbedded(result, paths, idx + 1, sc1);
+        }
 
         return result;
     }
-    protected Object getFromComponentType(ComponentType atype,Object obj,String[] paths, int idx,DocumentSchema sc) {
+
+    protected Object getFromComponentType(ComponentType atype, Object obj, String[] paths, int idx, DocumentSchema sc) {
         int index = 0;
         String path = "";
-        for ( int i=0; i <= idx; i++) {
+        for (int i = 0; i <= idx; i++) {
             path += "/" + paths[i];
         }
-        
+
         try {
             index = Integer.parseInt(paths[idx]);
-        } catch(NumberFormatException e) {
-            throw new NumberFormatException("Path '" +path + "' for ArrayType index requies integer type. " + e.getMessage() );
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Path '" + path + "' for ArrayType index requies integer type. " + e.getMessage());
         }
-        
+
         Object result;
         try {
-            result = Array.get(obj,index);
-        } catch(IndexOutOfBoundsException e) {
+            result = Array.get(obj, index);
+        } catch (IndexOutOfBoundsException e) {
             throw new IndexOutOfBoundsException("Path '" + path + "'. index==" + index + ". " + e.getMessage());
         }
-        if ( idx == paths.length - 1) {
+        if (idx == paths.length - 1) {
             return result;
         }
-        
-        checkValue(result,path); // might throw exception 
-        
 
-        if ( DocUtils.isArrayType(result.getClass())) {
-            ArrayType t = (ArrayType)atype.getSupportedType(result.getClass());
-            result = getFromArray(t,result,paths,idx+1,sc);
+        checkValue(result, path); // might throw exception 
 
-        } if ( DocUtils.isComponentType(result.getClass())) {
-            ComponentType t = (ComponentType)atype.getSupportedType(result.getClass());
-            result = getFromComponentType(t,result,paths,idx+1,sc);
 
-        } else if ( DocUtils.isEmbeddedType(result.getClass())) {
-            EmbeddedType t = (EmbeddedType)atype.getSupportedType(result.getClass());
+        if (DocUtils.isArrayType(result.getClass())) {
+            ArrayType t = (ArrayType) atype.getSupportedType(result.getClass());
+            result = getFromArray(t, result, paths, idx + 1, sc);
+
+        }
+        if (DocUtils.isComponentType(result.getClass())) {
+            ComponentType t = (ComponentType) atype.getSupportedType(result.getClass());
+            result = getFromComponentType(t, result, paths, idx + 1, sc);
+
+        } else if (DocUtils.isEmbeddedType(result.getClass())) {
+            EmbeddedType t = (EmbeddedType) atype.getSupportedType(result.getClass());
             DocumentSchema sc1 = t.getSchema();
-            result = getFromEmbedded(result,paths,idx+1,sc1);
-        }   
+            result = getFromEmbedded(result, paths, idx + 1, sc1);
+        }
 
         return result;
 
     }
+
     
-    protected Object getFromEmbedded(Object obj,String[] paths, int idx,DocumentSchema sc) {
+    protected Object getFromEmbedded(Object obj, String[] paths, int idx, DocumentSchema sc) {
+
         Field f = sc.getField(paths[idx]);
         String path = "";
-        for ( int i=0; i <= idx; i++) {
+        for (int i = 0; i <= idx; i++) {
             path += "/" + paths[i];
         }
-        
+
         if (f == null) {
-            throw new NullPointerException("A schema doesn't contain a field for key = " + path );
+            throw new NullPointerException("A schema doesn't contain a field for key = " + path);
         }
         String nm = paths[idx];
         Object result = DocUtils.getValue(nm, obj);
-        
-        if ( idx == paths.length - 1) {
+
+        if (idx == paths.length - 1) {
             return result;
         }
-        
-        if ( result == null) {
-            throw new NullPointerException("Null value for key path '" + path + "'");            
+
+        if (result == null) {
+            throw new NullPointerException("Null value for key path '" + path + "'");
         }
 
-        if ( DocUtils.isValueType(result.getClass())) {
+        if (DocUtils.isValueType(result.getClass())) {
             throw new IllegalArgumentException("Path '" + path + "': requires ValueType");
         }
-        if ( DocUtils.isArrayType(result.getClass())) {
-            result = getFromArray((ArrayType)getSupportedType(f),result,paths,idx+1,sc);
-        } else if ( DocUtils.isComponentType(result.getClass())) {
-            result = getFromComponentType((ComponentType)getSupportedType(f),result,paths,idx+1,sc);
+        if (DocUtils.isArrayType(result.getClass())) {
+            result = getFromArray((ArrayType) getSupportedType(f), result, paths, idx + 1, sc);
+        } else if (DocUtils.isComponentType(result.getClass())) {
+            result = getFromComponentType((ComponentType) getSupportedType(f), result, paths, idx + 1, sc);
         } else {
-            DocumentSchema sc1 = ((EmbeddedType)getSupportedType(f)).getSchema();
-            result = getFromEmbedded(result,paths,idx+1,sc1);
-        }   
+            DocumentSchema sc1 = ((EmbeddedType) getSupportedType(f)).getSchema();
+            result = getFromEmbedded(result, paths, idx + 1, sc1);
+        }
         return result;
-        
+
     }
-    protected void checkValue(Object obj,String path) {
-        
-        if ( obj == null) {
-            throw new NullPointerException("Null value for key path '" + path + "'");            
+
+    protected void checkValue(Object obj, String path) {
+
+        if (obj == null) {
+            throw new NullPointerException("Null value for key path '" + path + "'");
         }
 
-        if ( DocUtils.isValueType(obj.getClass())) {
+        if (DocUtils.isValueType(obj.getClass())) {
             throw new IllegalArgumentException("Path '" + path + "': requires ValueType");
         }
     }
-    
+
     protected SchemaType getSupportedType(Field f) {
         return f.getSupportedTypes().get(0);
     }
+
     @Override
     public Object get(Object key) {
         if (key == null || (key.toString().trim().isEmpty())) {
@@ -168,15 +175,17 @@ public class ObjectDocument<T> extends AbstractDocument {
         String[] paths = split(key.toString(), '/');
         // Me must keep in mind that a field may be in 'tail'
         Field f = getSchema().getField(paths[0]);
-        if ( f.isTail() ) {
+        if (f.isTail()) {
             return getFromEmbedded(tail, paths, 0, getSchema());
         }
+
         return getFromEmbedded(getDataObject(), paths, 0, getSchema());
     }
 
+    
     protected String[] split(String key, char dlm) {
         String k = key.trim();
-        if ( (!k.isEmpty()) && key.charAt(0) == dlm ) {
+        if ((!k.isEmpty()) && key.charAt(0) == dlm) {
             k = key.substring(1);
         }
         String[] result = k.split(String.valueOf(dlm));
@@ -188,7 +197,41 @@ public class ObjectDocument<T> extends AbstractDocument {
 
     @Override
     public void put(Object key, Object value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (key == null || (key.toString().trim().isEmpty())) {
+            throw new NullPointerException("ObjectDocument.put(null, ..)");
+        }
+        String[] paths = split(key.toString(), '/');
+        // Me must keep in mind that a field may be in 'tail'
+        Field f = getSchema().getField(paths[0]);
+        if (f.isTail()) {
+            putToEmbedded(tail, paths, 0, getSchema());
+        }
+        putToEmbedded(getDataObject(), paths, 0, getSchema());
+
+    }
+
+    protected void putToEmbedded(Object obj, String[] paths, int idx, DocumentSchema sc) {
+        Field f = sc.getField(paths[idx]);
+        String path = "";
+        for (int i = 0; i <= idx; i++) {
+            path += "/" + paths[i];
+        }
+
+        if (f == null) {
+            throw new NullPointerException("A schema doesn't contain a field for key = " + path);
+        }
+        String nm = paths[idx];
+        /*
+         * if ( DocUtils.isValueType(result.getClass())) { throw new
+         * IllegalArgumentException("Path '" + path + "': requires ValueType");
+         * } if ( DocUtils.isArrayType(result.getClass())) { result =
+         * getFromArray((ArrayType)getSupportedType(f),result,paths,idx+1,sc); }
+         * else if ( DocUtils.isComponentType(result.getClass())) { result =
+         * getFromComponentType((ComponentType)getSupportedType(f),result,paths,idx+1,sc);
+         * } else { DocumentSchema sc1 =
+         * ((EmbeddedType)getSupportedType(f)).getSchema(); result =
+         * getFromEmbedded(result,paths,idx+1,sc1); } return result;
+         */
     }
 
     @Override
@@ -220,4 +263,5 @@ public class ObjectDocument<T> extends AbstractDocument {
     protected T cloneData() {
         return null;
     }
+
 }

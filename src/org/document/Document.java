@@ -14,6 +14,7 @@ public interface Document extends Serializable {
     
     Object get(Object key);
     void put(Object key,Object value);
+    
     DocumentSchema getSchema();
     //void setSchema(DocumentSchema schema);
     
