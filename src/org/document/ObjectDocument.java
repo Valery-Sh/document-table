@@ -25,9 +25,7 @@ public class ObjectDocument<T> extends AbstractDocument {
         tail = new HashMap();
     }
     protected Object getFromArray(ArrayType atype,Object obj,String[] paths, int idx,DocumentSchema sc) {
-        if ( obj.getClass().isArray() ) {
-            return getFromComponentType(atype,obj, paths, idx, sc);
-        }
+
         int index = 0;
         String path = "";
         for ( int i=0; i <= idx; i++) {
@@ -57,7 +55,11 @@ public class ObjectDocument<T> extends AbstractDocument {
             ArrayType t = (ArrayType)atype.getSupportedType(result.getClass());
             result = getFromArray(t,result,paths,idx+1,sc);
 
-        } else if ( DocUtils.isEmbeddedType(result.getClass())) {
+        } else if ( DocUtils.isComponentType(result.getClass())) {
+            ComponentType t = (ComponentType)atype.getSupportedType(result.getClass());
+            result = getFromComponentType(t,result,paths,idx+1,sc);
+
+        }  else if ( DocUtils.isEmbeddedType(result.getClass())) {
             EmbeddedType t = (EmbeddedType)atype.getSupportedType(result.getClass());
             DocumentSchema sc1 = t.getSchema();
             result = getFromEmbedded(result,paths,idx+1,sc1);
@@ -65,7 +67,7 @@ public class ObjectDocument<T> extends AbstractDocument {
 
         return result;
     }
-    protected Object getFromComponentType(ArrayType atype,Object obj,String[] paths, int idx,DocumentSchema sc) {
+    protected Object getFromComponentType(ComponentType atype,Object obj,String[] paths, int idx,DocumentSchema sc) {
         int index = 0;
         String path = "";
         for ( int i=0; i <= idx; i++) {
@@ -94,6 +96,10 @@ public class ObjectDocument<T> extends AbstractDocument {
         if ( DocUtils.isArrayType(result.getClass())) {
             ArrayType t = (ArrayType)atype.getSupportedType(result.getClass());
             result = getFromArray(t,result,paths,idx+1,sc);
+
+        } if ( DocUtils.isComponentType(result.getClass())) {
+            ComponentType t = (ComponentType)atype.getSupportedType(result.getClass());
+            result = getFromComponentType(t,result,paths,idx+1,sc);
 
         } else if ( DocUtils.isEmbeddedType(result.getClass())) {
             EmbeddedType t = (EmbeddedType)atype.getSupportedType(result.getClass());
@@ -131,6 +137,8 @@ public class ObjectDocument<T> extends AbstractDocument {
         }
         if ( DocUtils.isArrayType(result.getClass())) {
             result = getFromArray((ArrayType)getSupportedType(f),result,paths,idx+1,sc);
+        } else if ( DocUtils.isComponentType(result.getClass())) {
+            result = getFromComponentType((ComponentType)getSupportedType(f),result,paths,idx+1,sc);
         } else {
             DocumentSchema sc1 = ((EmbeddedType)getSupportedType(f)).getSchema();
             result = getFromEmbedded(result,paths,idx+1,sc1);

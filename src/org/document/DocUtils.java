@@ -55,6 +55,7 @@ public class DocUtils {
     }
 
     public static DocumentSchema createSchema(Class clazz) {
+
         DocumentSchema schema = new DefaultSchema(clazz);
         try {
             BeanInfo binfo = Introspector.getBeanInfo(clazz, Object.class);
@@ -109,11 +110,9 @@ public class DocUtils {
         if (isValueType(type)) {
             f.add(new ValueType(type));
         } else if (isArrayType(type)) {
-            if (type.isArray()) {
+            f.add(new ArrayType(type));
+        } else if (isComponentType(type)) {
                 f.add(new ComponentType(type));
-            } else {
-                f.add(new ArrayType(type));
-            }
         } else if (DocumentReference.class.isAssignableFrom(type)) {
             f.add(new ReferenceType());
         } else {
@@ -172,14 +171,16 @@ public class DocUtils {
     }
 
     public static boolean isArrayType(Class type) {
-        return  type.isArray()
-                || Collection.class.isAssignableFrom(type)
-                || Map.class.isAssignableFrom(type);
-
+        return List.class.isAssignableFrom(type);
     }
 
+    public static boolean isComponentType(Class type) {
+        return  type.isArray();
+    }
+
+    
     public static boolean isEmbeddedType(Class type) {
-        return  ! ( isArrayType(type) || isValueType(type));
+        return  ! ( isArrayType(type) || isComponentType(type) || isValueType(type));
 
     }
     
@@ -206,7 +207,7 @@ public class DocUtils {
         return target;
     }
 
-    public static Object newArrayInstance(Class type) {
+    public static Object newComponentTypeInstance(Class type) {
 
         if (type == null || !type.isArray()) {
             return null;

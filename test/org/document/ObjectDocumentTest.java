@@ -248,7 +248,7 @@ public class ObjectDocumentTest {
         //
         ObjectDocument instance = new ObjectDocument(owa);
         DocumentSchema sc = instance.getSchema();
-        ArrayType atype = new ComponentType(stringArray.getClass());
+        ComponentType atype = new ComponentType(stringArray.getClass());
         String[] paths = new String[] {"owa","stringArray","0"};
         
         int idx = 2;

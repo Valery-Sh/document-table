@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author Valery
+ * Represents a java class that implements 
+ * <code>java.util.List</code> interface.
+ * 
+ * @author V. Shyshkin
  */
 public class ArrayType implements SchemaType {
 
@@ -80,11 +82,9 @@ public class ArrayType implements SchemaType {
             if ( DocUtils.isValueType(type)) {
                 result = new ValueType(type);
             } else if ( DocUtils.isArrayType(type)) {
-                if ( ! type.isArray() ) {
-                    result = new ArrayType(type);
-                } else {
-                    result = new ComponentType(type);
-                }
+                 result = new ArrayType(type);
+            } else  if ( DocUtils.isComponentType(type)) {
+                 result = new ComponentType(type);
             } else if ( DocUtils.isEmbeddedType(type)) {
                 DocumentSchema ds = DocUtils.createSchema(type);
                 result = new EmbeddedType(ds);

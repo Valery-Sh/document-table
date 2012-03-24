@@ -105,6 +105,9 @@ public class DocUtilsTest {
 
         DocumentSchema sc = DocUtils.createSchema(ObjectWithArray.class);        
         
+        DocumentSchema mapsc = DocUtils.createSchema(ObjectWithMap.class);        
+        
+        
     }
     
     @Test
@@ -116,9 +119,9 @@ public class DocUtilsTest {
         result = DocUtils.isArrayType(List.class);
         assertTrue(result);
         result = DocUtils.isArrayType(Map.class);
-        assertTrue(result);
+        assertFalse(result);
         result = DocUtils.isArrayType(Set.class);
-        assertTrue(result);
+        assertFalse(result);
 
         result = DocUtils.isArrayType(int.class);
         assertFalse(result);
@@ -317,7 +320,7 @@ public class DocUtilsTest {
     public void testNewArrayInstance() {
         String[][] instance = new String[2][3];
         
-        Object result = DocUtils.newArrayInstance(instance.getClass());
+        Object result = DocUtils.newComponentTypeInstance(instance.getClass());
         assertNotNull(result);
         assertEquals(String[][].class,result.getClass());
         assertEquals(0,((String[][])result).length);
