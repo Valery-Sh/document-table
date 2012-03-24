@@ -8,8 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author Valery
+ * When create an instance of the class 
+ * using <code>DocUtils.createSchema(Class)</code> 
+ * then a <code>SchemaType</code> is added to a list of supported 
+ * types of that instance. Thus the field has at least one 
+ * supported type registered.
+ * 
+ * 
+ * @author V. Shyshkin
  */
 public class Field {
     protected Object name;

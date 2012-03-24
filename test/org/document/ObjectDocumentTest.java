@@ -709,7 +709,38 @@ public class ObjectDocumentTest {
             System.out.println("Index out of bounds.");           
        }
         
-        
+       //
+       // tail Fields
+       //
+       Field tailField1 = new Field("tail1");
+       tailField1.setTail(true);
+       instance.getSchema().getFields().add(tailField1);
+       result = instance.get("tail1");
+       assertNull(result);
+       instance.tail.put("tail1","It is tale1 field value");
+       result = instance.get("tail1");
+       assertEquals("It is tale1 field value",result);
+       DocumentSchema addrSchema = DocUtils.createSchema(Address.class);
+       EmbeddedType etype = new EmbeddedType(addrSchema);
+       Field tailField2 = new Field("addrTail");
+       tailField2.setTail(true);
+       tailField2.add(etype);
+       
+       Address addrTail = new Address("Michigan","Detroit", "Witherall",124, 97);
+       instance.getSchema().getFields().add(tailField2);
+       instance.tail.put("addrTail",addrTail);
+       
+       Address expaddrTail = new Address("Michigan","Detroit", "Witherall",124, 97);
+       result = instance.get("addrTail");
+       assertEquals(expaddrTail,result);
+
+       result = instance.get("addrTail/city");
+       assertEquals("Detroit",result);
+
+       result = instance.get("tail1");
+       assertEquals("It is tale1 field value",result);
+       
+       
     }
 
     /**

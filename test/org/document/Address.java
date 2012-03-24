@@ -13,26 +13,26 @@ import java.util.List;
  */
 public class Address implements Serializable{
    private String state;
-   private String City;
+   private String city;
    private String street;
    private int house;
    private int flat;
    private List info;
 
-    public Address(String state, String City, String street, int house, int flat) {
+    public Address(String state, String city, String street, int house, int flat) {
         this.state = state;
-        this.City = City;
+        this.city = city;
         this.street = street;
         this.house = house;
         this.flat = flat;
     }
 
     public String getCity() {
-        return City;
+        return city;
     }
 
-    public void setCity(String City) {
-        this.City = City;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public int getFlat() {
@@ -87,7 +87,7 @@ public class Address implements Serializable{
         if ((this.state == null) ? (other.state != null) : !this.state.equals(other.state)) {
             return false;
         }
-        if ((this.City == null) ? (other.City != null) : !this.City.equals(other.City)) {
+        if ((this.city == null) ? (other.city != null) : !this.city.equals(other.city)) {
             return false;
         }
         if ((this.street == null) ? (other.street != null) : !this.street.equals(other.street)) {
@@ -109,7 +109,7 @@ public class Address implements Serializable{
     public int hashCode() {
         int hash = 5;
         hash = 73 * hash + (this.state != null ? this.state.hashCode() : 0);
-        hash = 73 * hash + (this.City != null ? this.City.hashCode() : 0);
+        hash = 73 * hash + (this.city != null ? this.city.hashCode() : 0);
         hash = 73 * hash + (this.street != null ? this.street.hashCode() : 0);
         hash = 73 * hash + this.house;
         hash = 73 * hash + this.flat;

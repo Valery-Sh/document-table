@@ -74,7 +74,36 @@ public class DocUtils {
         }
         return schema;
     }
-
+    /**
+     * Create and returns a new instance of type 
+     * <code>org.document.Field</code> with a name and type specified by parameters.
+     * The type specified by the second parameter may be one of the following:
+     * <ul>
+     *  <li><i><b>Value type</b></i> means that the method 
+     *      <code>DocUtils.isValueType(type)</code> 
+     *      returns <code>true</code>
+     *  </li> 
+     *  <li>
+     *      <i><b>Array type</b></i> means that the method 
+     *      <code>DocUtils.isArrayType(type)</code> 
+     *      returns <code>true</code>. If the <code>type.isArray()</code> 
+     *      is <code>true</code> then a supported type is represented
+     *      with a class <code>org.document.ComponentType</code>. 
+     *      Otherwise with a class <code>org.document.ArrayType</code>.
+     * </li> 
+     *  <li>
+     *      <i><b>Embedded type</b></i> means that the method 
+     *      <code>DocUtils.isEmbeddedType(type)</code> 
+     *      returns <code>true</code>. In general if a type is neither a <i>Value Type</i>,
+     *      an <i>Array Type</i> or a <i>Reference Type</i> it is 
+     *      considered to be an <i>Embedded Type</i>.
+     *  </li> 
+     * 
+     * </ul>
+     * @param name the  name of the field to be created.
+     * @param type the class witch represents a supported type. 
+     * @return a new instance of type <code>org.document.Field</code>.
+     */
     public static Field createField(String name, Class type) {
         Field f = new Field(name, false, false);
         if (isValueType(type)) {

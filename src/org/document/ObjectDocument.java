@@ -158,6 +158,11 @@ public class ObjectDocument<T> extends AbstractDocument {
             return null;
         }
         String[] paths = split(key.toString(), '/');
+        // Me must keep in mind that a field may be in 'tail'
+        Field f = getSchema().getField(paths[0]);
+        if ( f.isTail() ) {
+            return getFromEmbedded(tail, paths, 0, getSchema());
+        }
         return getFromEmbedded(getDataObject(), paths, 0, getSchema());
     }
 
