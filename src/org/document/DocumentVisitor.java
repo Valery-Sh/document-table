@@ -116,8 +116,8 @@ public class DocumentVisitor {
 
     }
 
-    public void visitEmbedded(EmbeddedType embeddedType, Object sourceObject) {
-
+    public void visitEmbedded(SchemaType schemaType, Object sourceObject) {
+        EmbeddedType embeddedType = (EmbeddedType) schemaType;        
         VisitorInfo info = new VisitorInfo(embeddedType, sourceObject);
         infoList.add(info);
         DocumentSchema ds = embeddedType.getSchema();
@@ -152,14 +152,15 @@ public class DocumentVisitor {
         SchemaType st = f.getSupportedTypes().get(0);
         
         if (DocUtils.isArrayType(result.getClass())) {
-            visitArray((ArrayType)st, result);
+            visitArray(st, result);
         } else if (DocUtils.isComponentType(result.getClass())) {
-            visitComponent((ComponentType)st, result);            
+            visitComponent(st, result);            
         } else {
-            visitEmbedded((EmbeddedType)st,result);
+            visitEmbedded(st,result);
         }
     }
-    public void visitArray(ArrayType arrayType, Object sourceObject) {
+    public void visitArray(SchemaType schemaType, Object sourceObject) {
+        ArrayType arrayType = (ArrayType)schemaType;
         VisitorInfo info = new VisitorInfo(arrayType, sourceObject);
         infoList.add(info);
         int idx = infoList.size() - 1;
@@ -203,25 +204,19 @@ public class DocumentVisitor {
             return;
             //throw new IllegalArgumentException("Path '" + path + "': requires ValueType");
         }
-
+        SchemaType st = arrayType.getSupportedType(result.getClass());
         if (DocUtils.isArrayType(result.getClass())) {
-            ArrayType t = (ArrayType) arrayType.getSupportedType(result.getClass());
-            visitArray(t, result);
-            //result = getFromArray(t, result, paths, idx + 1, sc);
-
+            visitArray(st, result);
         } else if (DocUtils.isComponentType(result.getClass())) {
-            ComponentType t = (ComponentType) arrayType.getSupportedType(result.getClass());
-            visitComponent(t, result);            
-            //result = getFromComponentType(t, result, paths, idx + 1, sc);
-
+            visitComponent(st, result);            
         } else if (DocUtils.isEmbeddedType(result.getClass())) {
-            EmbeddedType t = (EmbeddedType) arrayType.getSupportedType(result.getClass());
-            visitEmbedded(t,result);
+            visitEmbedded(st,result);
         }
         
         
     }
-    public void visitComponent(ComponentType componentType,Object sourceObject) {
+    public void visitComponent(SchemaType schemaType,Object sourceObject) {
+        ComponentType componentType  = (ComponentType) schemaType;      
         VisitorInfo info = new VisitorInfo(componentType, sourceObject);
         infoList.add(info);
         int idx = infoList.size() - 1;
@@ -260,16 +255,13 @@ public class DocumentVisitor {
             info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));
             return;
         }
-
+        SchemaType st = componentType.getSupportedType(result.getClass());
         if (DocUtils.isArrayType(result.getClass())) {
-            ArrayType t = (ArrayType) componentType.getSupportedType(result.getClass());
-            visitArray(t, result);
+            visitArray(st, result);
         } else if (DocUtils.isComponentType(result.getClass())) {
-            ComponentType t = (ComponentType) componentType.getSupportedType(result.getClass());
-            visitComponent(t, result);            
+            visitComponent(st, result);            
         } else if (DocUtils.isEmbeddedType(result.getClass())) {
-            EmbeddedType t = (EmbeddedType) componentType.getSupportedType(result.getClass());
-            visitEmbedded(t,result);
+            visitEmbedded(st,result);
         }
 
         
