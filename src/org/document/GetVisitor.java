@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.document;
 
 import java.lang.reflect.Array;
@@ -10,20 +7,16 @@ import java.util.List;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
-public class GetVisitor {
+public class GetVisitor extends DocumentVisitor{
 
-    protected Document rootDoc;
-    protected List<VisitorInfo> infoList;
-    protected String key;
-    protected String[] paths;
 
     public GetVisitor(Document rootDoc) {
-        this.rootDoc = rootDoc;
-        infoList = new ArrayList<VisitorInfo>();
+        super(rootDoc);
     }
 
+    @Override
     public void visitDocument(String ... keys) {
         this.key = "";
         for ( int i=0; i < keys.length;i++) {
@@ -31,19 +24,16 @@ public class GetVisitor {
         }
         visitDocument(key);
     }
+    @Override
     public void visitDocument(String key) {
         paths = DocUtils.split(key, '/');
-        infoList = new ArrayList<VisitorInfo>();
+        infoList = new ArrayList<DocumentVisitor.VisitorInfo>();
         Field f = rootDoc.getSchema().getField(paths[0]);
         if (f.isTail()) {
             visitEmbedded(new EmbeddedType(rootDoc.getSchema()), ((ObjectDocument) rootDoc).tail);
         } else {
             visitEmbedded(new EmbeddedType(rootDoc.getSchema()), ((ObjectDocument) rootDoc).getDataObject());
         }
-    }
-
-    public void setPaths(String ... path) {
-        this.paths = path;
     }
 
     public void continueVisit(String ... addKeys) {
@@ -97,9 +87,10 @@ public class GetVisitor {
     
 
 
+    @Override
     public void visitEmbedded(SchemaType schemaType, Object sourceObject) {
         EmbeddedType embeddedType = (EmbeddedType) schemaType;        
-        VisitorInfo info = new VisitorInfo(schemaType, sourceObject);
+        DocumentVisitor.VisitorInfo info = new DocumentVisitor.VisitorInfo(schemaType, sourceObject);
         infoList.add(info);
         DocumentSchema ds = embeddedType.getSchema();
         int pathIndex = infoList.size() - 1;
@@ -146,10 +137,8 @@ public class GetVisitor {
         }
     }
     
+    @Override
     public void visitArray(SchemaType schemaType, Object sourceObject) {
-        visit(schemaType, sourceObject);
-    }
-    protected void visit(SchemaType schemaType,Object sourceObject) {
         VisitorInfo info = new VisitorInfo(schemaType, sourceObject);
         infoList.add(info);
         int idx = infoList.size() - 1;
@@ -205,88 +194,10 @@ public class GetVisitor {
         } else if (DocUtils.isEmbeddedType(result.getClass())) {
             visitEmbedded(st,result);
         }
-        
     }
-    
-    public void visitPut(SchemaType schemaType,Object sourceObject,String key,Object newValue) {
-        this.paths = new String[] {key};
-        this.infoList.clear();
-        if ( schemaType instanceof ArrayType || schemaType instanceof ComponentType ) {
-            this.visitPutArray(schemaType, sourceObject, newValue);
-        } else if (schemaType instanceof EmbeddedType ) {
-            this.visitPutEmbedded(schemaType, sourceObject, newValue);
-        }
-    }
-    
-    protected void visitPutArray(SchemaType schemaType,Object sourceObject,Object newValue) {
-        VisitorInfo info = new VisitorInfo(schemaType, sourceObject);
-        infoList.add(info);
-        int idx = infoList.size() - 1;
-                
-        int index;
-        String path = "";
-        
-        for (int i = 0; i <= idx; i++) {
-            path += "/" + paths[i];
-        }
-        try {
-            index = Integer.parseInt(paths[idx]);
-        } catch (NumberFormatException e) {
-            info.setException(new NumberFormatException("Path '" + path + "' for ArrayType index requies integer type. " + e.getMessage()));
-            return;
-        }
 
-        try {
-            if ( sourceObject.getClass().isArray()) {
-                Array.set(sourceObject, index, newValue);
-                info.setResult(Array.get(sourceObject, index));
-            } else {
-                List l = (List)sourceObject; 
-                if ( index >= l.size()) {
-                    l.add(newValue);
-                    index = l.size()-1;
-                } else {
-                    l.set(index,newValue);
-                }
-                info.setResult(((List)sourceObject).get(index));
-            }
-        } catch (NullPointerException e) {
-            info.setException(new NullPointerException("Path '" + path + "'. index==" + index + ". " + e.getMessage()));
-        } catch (ArrayIndexOutOfBoundsException e) {
-            info.setException(new ArrayIndexOutOfBoundsException("Path '" + path + "'. index==" + index + ". " + e.getMessage()));
-        }
-        
-    }
-    public void visitPutEmbedded(SchemaType schemaType, Object sourceObject,Object newValue) {
-        EmbeddedType embeddedType = (EmbeddedType) schemaType;        
-        VisitorInfo info = new VisitorInfo(schemaType, sourceObject);
-        infoList.add(info);
-        DocumentSchema ds = embeddedType.getSchema();
-        int pathIndex = infoList.size() - 1;
-        Field f = ds.getField(paths[pathIndex]);
-        SchemaType st = f.getDefaultType();        
-        
-        String path = "";
-        for (int i = 0; i <= pathIndex; i++) {
-            path += "/" + paths[i];
-        }
-
-        if (f == null) {
-            info.setException(new NullPointerException("A schema doesn't contain a field for key = " + path));            
-            return;
-        }
-        String nm = paths[pathIndex];
-        Object result = null;
-        try {
-            result = DocUtils.setValue(nm, sourceObject,newValue);
-            info.setResult(result);
-        } catch(Exception e) {
-            info.setException(e);
-        }
-    }
-    
     public void visitComponent(SchemaType schemaType,Object sourceObject) {
-        visit(schemaType, sourceObject);        
+        visitArray(schemaType, sourceObject);        
     }
     
     public VisitorInfo getInfo(int idx) {
@@ -303,78 +214,4 @@ public class GetVisitor {
         return this.infoList.get(infoList.size()-1).getException();
     }
     
-    public static class VisitorInfo {
-
-        private Document rootDocument;
-//        EmbeddedType embeddedType;        
-        private SchemaType sourceSchemaType;
-        private SchemaType resultSchemaType;
-        
-        private Exception exception;
-        private Object result;
-        private Object sourceObject;
-
-        public VisitorInfo(Document doc) {
-            this.rootDocument = doc;
-        }
-
-        public VisitorInfo(SchemaType embeddedType, Object sourceObject) {
-            this.sourceSchemaType = embeddedType;
-            this.sourceObject = sourceObject;
-        }
-/*        public VisitorInfo(ArrayType arrayType, Object sourceObject) {
-            this.sourceSchemaType = arrayType;
-            this.sourceObject = sourceObject;
-        }
-*/
-        public Exception getException() {
-            return exception;
-        }
-
-        public void setException(Exception exception) {
-            this.exception = exception;
-        }
-
-        public Object getResult() {
-            return result;
-        }
-
-        public void setResult(Object result) {
-            this.result = result;
-        }
-
-        public Document getRootDocument() {
-            return rootDocument;
-        }
-
-        public void setRootDocument(Document rootDocument) {
-            this.rootDocument = rootDocument;
-        }
-
-        public SchemaType getSourceSchemaType() {
-            return sourceSchemaType;
-        }
-
-        public void setSourceSchemaType(SchemaType schemaType) {
-            this.sourceSchemaType = schemaType;
-        }
-
-        public Object getSourceObject() {
-            return sourceObject;
-        }
-
-        public void setSourceObject(Object sourceObject) {
-            this.sourceObject = sourceObject;
-        }
-
-        public SchemaType getResultSchemaType() {
-            return resultSchemaType;
-        }
-
-        public void setResultSchemaType(SchemaType resultSchemaType) {
-            this.resultSchemaType = resultSchemaType;
-        }
-        
-        
-    }
 }

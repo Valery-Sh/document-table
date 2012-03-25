@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 import java.lang.reflect.Array;
@@ -10,28 +6,15 @@ import java.util.List;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
-public class PutVisitor {
+public class PutVisitor extends DocumentVisitor {
 
-    protected Document rootDoc;
-    protected List<GetVisitor.VisitorInfo> infoList;
-    protected String key;
-    protected String[] paths;
 
     public PutVisitor(Document rootDoc) {
-        this.rootDoc = rootDoc;
-        infoList = new ArrayList<GetVisitor.VisitorInfo>();
+        super(rootDoc);
     }
 
-/*    public void visitDocument(String ... keys) {
-        this.key = "";
-        for ( int i=0; i < keys.length;i++) {
-            key += keys[i] + "/";
-        }
-        visitDocument(key);
-    }
- */
     public void visitDocument(String key,Object value) {
         paths = DocUtils.split(key, '/');
         infoList = new ArrayList<GetVisitor.VisitorInfo>();
@@ -72,173 +55,7 @@ public class PutVisitor {
         
         
     }
-/*
-    public void setPaths(String ... path) {
-        this.paths = path;
-    }
 
-    public void continueVisit(String ... addKeys) {
-        this.key = "";
-        String[] newkeys = new String[paths.length + addKeys.length];
-        System.arraycopy(paths, 0, newkeys, 0, paths.length);
-        System.arraycopy(addKeys, 0, newkeys, paths.length, addKeys.length);
-        
-        this.paths = newkeys;
-        for ( int i=0; i < paths.length;i++) {
-            key += paths[i] + "/";
-        }
-        GetVisitor.VisitorInfo info = this.getInfo();
-        Object result = info.getResult();
-        int idx = infoList.size()-1;
-        String path = "";
-        
-        for (int i = 0; i <= idx; i++) {
-            path += "/" + paths[i];
-        }
-        
-        if (result == null) {
-            info.setException(new NullPointerException("Null value for key path '" + path + "'"));
-            return;
-        }
-
-        if (DocUtils.isValueType(result.getClass())) {
-            info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));            
-            return;
-        }
-        SchemaType st;
-        if (info.getSourceSchemaType() instanceof ArrayType ) {
-            st = ((ArrayType)info.getSourceSchemaType()).getSupportedType(result.getClass());
-        } else if (info.getSourceSchemaType() instanceof ComponentType ) {
-            st = ((ComponentType)info.getSourceSchemaType()).getSupportedType(result.getClass());
-        } else {
-            String nm = paths[infoList.size()-1];
-            Field f = ((EmbeddedType)info.getSourceSchemaType()).getSchema().getField(nm);
-            st = f.getSupportedTypes().get(0);
-        }
-        
-        if (DocUtils.isArrayType(result.getClass())) {
-            visitArray((ArrayType)st, result);
-        } else if (DocUtils.isComponentType(result.getClass())) {
-            visitComponent((ComponentType)st, result);            
-        } else {
-            visitEmbedded((EmbeddedType)st,result);
-        }
-        
-    }
-    
-
-
-    public void visitEmbedded(SchemaType schemaType, Object sourceObject) {
-        EmbeddedType embeddedType = (EmbeddedType) schemaType;        
-        GetVisitor.VisitorInfo info = new GetVisitor.VisitorInfo(schemaType, sourceObject);
-        infoList.add(info);
-        DocumentSchema ds = embeddedType.getSchema();
-        int pathIndex = infoList.size() - 1;
-        Field f = ds.getField(paths[pathIndex]);
-        SchemaType st = f.getDefaultType();        
-        info.setResultSchemaType(st);        
-        
-        String path = "";
-        for (int i = 0; i <= pathIndex; i++) {
-            path += "/" + paths[i];
-        }
-
-        if (f == null) {
-            info.setException(new NullPointerException("A schema doesn't contain a field for key = " + path));            
-            return;
-
-        }
-        String nm = paths[pathIndex];
-        Object result = DocUtils.getValue(nm, sourceObject);
-        info.setResult(result);
-        
-        if (pathIndex == paths.length - 1) {
-            return;
-        }
-
-        if (result == null) {
-            info.setException(new NullPointerException("Null value for key path '" + path + "'"));
-            return;
-        }
-
-        if (DocUtils.isValueType(result.getClass())) {
-            info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));            
-            return;
-        }
-        
-        //SchemaType st = f.getSupportedTypes().get(0);
-        
-        if (DocUtils.isArrayType(result.getClass())) {
-            visitArray(st, result);
-        } else if (DocUtils.isComponentType(result.getClass())) {
-            visitComponent(st, result);            
-        } else {
-            visitEmbedded(st,result);
-        }
-    }
-    
-    public void visitArray(SchemaType schemaType, Object sourceObject) {
-        visit(schemaType, sourceObject);
-    }
-    protected void visit(SchemaType schemaType,Object sourceObject) {
-        GetVisitor.VisitorInfo info = new GetVisitor.VisitorInfo(schemaType, sourceObject);
-        infoList.add(info);
-        int idx = infoList.size() - 1;
-                
-        int index;
-        String path = "";
-        
-        for (int i = 0; i <= idx; i++) {
-            path += "/" + paths[i];
-        }
-        try {
-            index = Integer.parseInt(paths[idx]);
-        } catch (NumberFormatException e) {
-            info.setException(new NumberFormatException("Path '" + path + "' for ArrayType index requies integer type. " + e.getMessage()));
-            return;
-        }
-
-        Object result;
-        try {
-            if ( sourceObject.getClass().isArray()) {
-                result = Array.get(sourceObject, index);
-            } else {
-                result = ((List)sourceObject).get(index);
-            }
-        } catch (IndexOutOfBoundsException e) {
-            info.setException(new IndexOutOfBoundsException("Path '" + path + "'. index==" + index + ". " + e.getMessage()));
-            return;
-        }
-        info.setResult(result);
-        SchemaType st = null;
-        if ( result != null ) {
-            st = ((HasSupportedTypes)schemaType).getSupportedType(result.getClass());
-            info.setResultSchemaType(st);
-        }
-        
-        if (idx == paths.length - 1) {
-            return;
-        }
-        if (result == null) {
-            info.setException(new NullPointerException("Null value for key path '" + path + "'"));
-            return;
-        }
-
-        if (DocUtils.isValueType(result.getClass())) {
-            info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));
-            return;
-        }
-        
-        if (DocUtils.isArrayType(result.getClass())) {
-            visitArray(st, result);
-        } else if (DocUtils.isComponentType(result.getClass())) {
-            visitComponent(st, result);            
-        } else if (DocUtils.isEmbeddedType(result.getClass())) {
-            visitEmbedded(st,result);
-        }
-        
-    }
-  */  
     protected void visitPut(SchemaType schemaType,Object sourceObject,Object newValue) {
         String lastKey = paths[0];
         if ( paths.length > 1 ) {
@@ -299,7 +116,6 @@ public class PutVisitor {
         DocumentSchema ds = embeddedType.getSchema();
         int pathIndex = infoList.size() - 1;
         Field f = ds.getField(paths[pathIndex]);
-        SchemaType st = f.getDefaultType();        
         
         String path = "";
         for (int i = 0; i <= pathIndex; i++) {
@@ -311,7 +127,7 @@ public class PutVisitor {
             return;
         }
         String nm = paths[pathIndex];
-        Object result = null;
+        Object result;
         try {
             result = DocUtils.setValue(nm, sourceObject,newValue);
             info.setResult(result);
@@ -319,11 +135,6 @@ public class PutVisitor {
             info.setException(e);
         }
     }
-  /*  
-    public void visitComponent(SchemaType schemaType,Object sourceObject) {
-        visit(schemaType, sourceObject);        
-    }
-*/    
     public GetVisitor.VisitorInfo getInfo(int idx) {
         return this.infoList.get(idx);
     }

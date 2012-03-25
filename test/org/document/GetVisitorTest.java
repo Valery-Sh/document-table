@@ -4,12 +4,10 @@
  */
 package org.document;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import org.document.GetVisitor.VisitorInfo;
-import org.junit.*;
+import org.document.DocumentVisitor.VisitorInfo;
 import static org.junit.Assert.*;
+import org.junit.*;
 
 /**
  *
@@ -314,70 +312,5 @@ public class GetVisitorTest {
   
     }
     
-    /**
-     * Test of visitPutArray method, of class GetVisitor.
-     */
-    @Test
-    public void testVisitPutArray() {
-        System.out.println("DocumentVisitor: visitPutArray");
-        SchemaType atype = new ComponentType(String[].class);
-        Object sourceObject = new String[] {"[0]","[1]"};
-        Person person = new Person("Bill","Smith", new Date(), 1);
-        
-        Document doc = new ObjectDocument(person);
-        GetVisitor visitor = new GetVisitor(doc);
-        visitor.setPaths("1");
-        visitor.visitPutArray(atype, sourceObject, "[11]");
-        Object result = visitor.getResult();
-        assertEquals("[11]",result);
-        //
-        // Two dim Array
-        //
-        sourceObject = new String[][] {
-            {"[0,0]","[0,1]","[0,2]"},
-            {"[1,0]","[1,1]","[1,2]"}};        
-        
-        Object newValue = new String[] {"[0.0,0]","[0.0,1]","[0.0,2]"};
-        Object expResult = new String[] {"[0.0,0]","[0.0,1]","[0.0,2]"};
-
-        visitor = new GetVisitor(doc);        
-        visitor.setPaths("0");
-        atype = new ComponentType(String[][].class);
-        visitor.visitPutArray(atype, sourceObject, newValue);
-        result = visitor.getResult();
-        assertArrayEquals((String[])expResult,(String[])result);
-        
-        sourceObject = new ArrayList();
-        ((List)sourceObject).add("elem1");
-        ((List)sourceObject).add("elem2");
-        newValue = "element2";
-        visitor = new GetVisitor(doc);        
-        visitor.setPaths("1");
-        atype = new ArrayType(List.class);
-        visitor.visitPutArray(atype, sourceObject, newValue);
-        result = visitor.getResult();
-        assertEquals("element2",result);
-        
-        
-    }
-
-    /**
-     * Test of visitPutEmbedded method, of class GetVisitor.
-     */
-    @Test
-    public void testVisitPutEmbedded() {
-        System.out.println("DocumentVisitor: visitPutArray");
-        DocumentSchema ds = DocUtils.createSchema(Person.class);
-        SchemaType atype = new EmbeddedType(ds);
-        Object sourceObject = new Person("Bill","Smith", new Date(), 1);
-        Person person = new Person("Bill","Smith", new Date(), 1);
-        
-        Document doc = new ObjectDocument(person);
-        GetVisitor visitor = new GetVisitor(doc);
-        visitor.setPaths("lastName");
-        visitor.visitPutEmbedded(atype, sourceObject, "Nelson");
-        Object result = visitor.getResult();
-        assertEquals("Nelson",result);
-    }
     
 }

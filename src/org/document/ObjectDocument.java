@@ -48,15 +48,11 @@ public class ObjectDocument<T> extends AbstractDocument {
         visitor.visitDocument(key.toString(), value);
         
         if ( visitor.getException() != null ) {
-            RuntimeException re = (RuntimeException)visitor.getException();
-            throw re;
+            throw (RuntimeException)visitor.getException();
         }
-        
-        //return visitor.getResult();
-
     }
     //@Override
-    public void putOld(Object key, Object value) {
+/*    public void putOld(Object key, Object value) {
         if (key == null || (key.toString().trim().isEmpty())) {
             return;
         }
@@ -98,7 +94,7 @@ public class ObjectDocument<T> extends AbstractDocument {
         //return visitor.getResult();
 
     }
-    
+  */  
     @Override
     public DocumentSchema getSchema() {
         DocumentSchema ds;
