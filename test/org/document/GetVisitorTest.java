@@ -7,7 +7,7 @@ package org.document;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.document.DocumentVisitor.VisitorInfo;
+import org.document.GetVisitor.VisitorInfo;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -15,9 +15,9 @@ import static org.junit.Assert.*;
  *
  * @author Valery
  */
-public class DocumentVisitorTest {
+public class GetVisitorTest {
     
-    public DocumentVisitorTest() {
+    public GetVisitorTest() {
     }
 
     @BeforeClass
@@ -37,14 +37,14 @@ public class DocumentVisitorTest {
     }
 
     /**
-     * Test of split method, of class DocumentVisitor.
+     * Test of split method, of class GetVisitor.
      */
     @Test
     public void testSplit() {
         System.out.println("split");
         String key = "";
         char dlm = ' ';
-        DocumentVisitor instance = null;
+        GetVisitor instance = null;
         String[] expResult = null;
         //String[] result = document.split(key, dlm);
         //assertEquals(expResult, result);
@@ -53,7 +53,7 @@ public class DocumentVisitorTest {
     }
 
     /**
-     * Test of visitDocument method, of class DocumentVisitor.
+     * Test of visitDocument method, of class GetVisitor.
      */
     @Test
     public void testVisitDocument() {
@@ -69,13 +69,13 @@ public class DocumentVisitorTest {
         Object result = document.get("family");
         
         
-        DocumentVisitor instance = new DocumentVisitor(document);
+        GetVisitor instance = new GetVisitor(document);
         instance.visitDocument("firstName");
         assertEquals(1,instance.infoList.size());
         VisitorInfo vinfo = instance.infoList.get(instance.infoList.size()-1);
         assertEquals("Bill",vinfo.getResult());
 
-        //instance = new DocumentVisitor(document);
+        //instance = new GetVisitor(document);
         instance.visitDocument("order/orderNum");
         assertEquals(125L,instance.getResult());
         
@@ -84,7 +84,7 @@ public class DocumentVisitorTest {
         // fail when field doesn't exist
         //
         try {
-            //instance = new DocumentVisitor(document);
+            //instance = new GetVisitor(document);
             instance.visitDocument("frstName");            
             if ( instance.getException() != null ) {
                 throw (NullPointerException)instance.getException();
@@ -100,7 +100,7 @@ public class DocumentVisitorTest {
             Person person1 = new Person(null,"Smith", new Date(), 1);
             ObjectDocument doc = new ObjectDocument(person1);
             
-            DocumentVisitor instance1 = new DocumentVisitor(doc);
+            GetVisitor instance1 = new GetVisitor(doc);
             instance1.visitDocument("firstName/lastName");            
             if ( instance1.getException() != null ) {
                 throw (NullPointerException)instance1.getException();
@@ -115,7 +115,7 @@ public class DocumentVisitorTest {
         try {
             Person person1 = new Person("Bill","Smith", new Date(), 1);
             ObjectDocument doc = new ObjectDocument(person1);
-            DocumentVisitor instance1 = new DocumentVisitor(doc);
+            GetVisitor instance1 = new GetVisitor(doc);
             instance1.visitDocument("firstName/lastName");            
             if ( instance1.getException() != null ) {
                 throw (IllegalArgumentException)instance1.getException();
@@ -127,7 +127,7 @@ public class DocumentVisitorTest {
 
         
         expResult = 125L;
-        //instance = new DocumentVisitor("order/orderNum");
+        //instance = new GetVisitor("order/orderNum");
         instance.visitDocument("order/orderNum");
         
         result = instance.getResult();
@@ -136,7 +136,7 @@ public class DocumentVisitorTest {
     }
 
     /**
-     * Test of continueVisit method, of class DocumentVisitor.
+     * Test of continueVisit method, of class GetVisitor.
      */
     @Test
     public void testContinueVisit() {
@@ -152,7 +152,7 @@ public class DocumentVisitorTest {
         Object result = document.get("family");
         
         
-        DocumentVisitor instance = new DocumentVisitor(document);
+        GetVisitor instance = new GetVisitor(document);
         instance.visitDocument("firstName");
         assertEquals(1,instance.infoList.size());
         VisitorInfo vinfo = instance.infoList.get(instance.infoList.size()-1);
@@ -186,7 +186,7 @@ public class DocumentVisitorTest {
             Person person1 = new Person(null,"Smith", new Date(), 1);
             ObjectDocument doc = new ObjectDocument(person1);
             
-            DocumentVisitor instance1 = new DocumentVisitor(doc);
+            GetVisitor instance1 = new GetVisitor(doc);
             instance1.visitDocument("firstName/lastName");            
             if ( instance1.getException() != null ) {
                 throw (NullPointerException)instance1.getException();
@@ -201,7 +201,7 @@ public class DocumentVisitorTest {
         try {
             Person person1 = new Person("Bill","Smith", new Date(), 1);
             ObjectDocument doc = new ObjectDocument(person1);
-            DocumentVisitor instance1 = new DocumentVisitor(doc);
+            GetVisitor instance1 = new GetVisitor(doc);
             instance1.visitDocument("firstName/lastName");            
             if ( instance1.getException() != null ) {
                 throw (IllegalArgumentException)instance1.getException();
@@ -221,33 +221,33 @@ public class DocumentVisitorTest {
     }
     
     /**
-     * Test of visitEmbedded method, of class DocumentVisitor.
+     * Test of visitEmbedded method, of class GetVisitor.
      */
     @Test
     public void testVisitEmbedded() {
         System.out.println("DocumentVisitorTest: visitEmbedded");
 /*        EmbeddedType embeddedType = null;
         Object sourceObject = null;
-        DocumentVisitor document = null;
+        GetVisitor document = null;
         document.visitEmbedded(embeddedType, sourceObject);
   */
     }
 
     /**
-     * Test of visitArray method, of class DocumentVisitor.
+     * Test of visitArray method, of class GetVisitor.
      */
     @Test
     public void testVisitArray() {
         System.out.println("visitArray");
     /*    ArrayType arrayType = null;
         Object sourceObject = null;
-        DocumentVisitor document = null;
+        GetVisitor document = null;
         document.visitArray(arrayType, sourceObject);
 */    
     }
 
     /**
-     * Test of visitComponent method, of class DocumentVisitor.
+     * Test of visitComponent method, of class GetVisitor.
      */
     @Test
     public void testVisitComponent() {
@@ -275,7 +275,7 @@ public class DocumentVisitorTest {
         // Array of type String[]
         //
         ObjectDocument document = new ObjectDocument(owa);
-        DocumentVisitor instance = new DocumentVisitor(document);
+        GetVisitor instance = new GetVisitor(document);
         instance.visitDocument("stringArray","0");
         Object result = instance.getResult();
         assertEquals("str1",result);
@@ -315,7 +315,7 @@ public class DocumentVisitorTest {
     }
     
     /**
-     * Test of visitPutArray method, of class DocumentVisitor.
+     * Test of visitPutArray method, of class GetVisitor.
      */
     @Test
     public void testVisitPutArray() {
@@ -325,7 +325,7 @@ public class DocumentVisitorTest {
         Person person = new Person("Bill","Smith", new Date(), 1);
         
         Document doc = new ObjectDocument(person);
-        DocumentVisitor visitor = new DocumentVisitor(doc);
+        GetVisitor visitor = new GetVisitor(doc);
         visitor.setPaths("1");
         visitor.visitPutArray(atype, sourceObject, "[11]");
         Object result = visitor.getResult();
@@ -340,7 +340,7 @@ public class DocumentVisitorTest {
         Object newValue = new String[] {"[0.0,0]","[0.0,1]","[0.0,2]"};
         Object expResult = new String[] {"[0.0,0]","[0.0,1]","[0.0,2]"};
 
-        visitor = new DocumentVisitor(doc);        
+        visitor = new GetVisitor(doc);        
         visitor.setPaths("0");
         atype = new ComponentType(String[][].class);
         visitor.visitPutArray(atype, sourceObject, newValue);
@@ -351,7 +351,7 @@ public class DocumentVisitorTest {
         ((List)sourceObject).add("elem1");
         ((List)sourceObject).add("elem2");
         newValue = "element2";
-        visitor = new DocumentVisitor(doc);        
+        visitor = new GetVisitor(doc);        
         visitor.setPaths("1");
         atype = new ArrayType(List.class);
         visitor.visitPutArray(atype, sourceObject, newValue);
@@ -362,7 +362,7 @@ public class DocumentVisitorTest {
     }
 
     /**
-     * Test of visitPutEmbedded method, of class DocumentVisitor.
+     * Test of visitPutEmbedded method, of class GetVisitor.
      */
     @Test
     public void testVisitPutEmbedded() {
@@ -373,7 +373,7 @@ public class DocumentVisitorTest {
         Person person = new Person("Bill","Smith", new Date(), 1);
         
         Document doc = new ObjectDocument(person);
-        DocumentVisitor visitor = new DocumentVisitor(doc);
+        GetVisitor visitor = new GetVisitor(doc);
         visitor.setPaths("lastName");
         visitor.visitPutEmbedded(atype, sourceObject, "Nelson");
         Object result = visitor.getResult();

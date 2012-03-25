@@ -31,7 +31,7 @@ public class ObjectDocument<T> extends AbstractDocument {
         String[] paths = DocUtils.split(key.toString(), '/');
         // Me must keep in mind that a field may be in 'tail'
         //Field f = getSchema().getField(paths[0]);
-        DocumentVisitor visitor = new DocumentVisitor(this);
+        GetVisitor visitor = new GetVisitor(this);
         visitor.visitDocument(key.toString());
         if ( visitor.getException() != null ) {
             RuntimeException re = (RuntimeException)visitor.getException();
@@ -41,6 +41,22 @@ public class ObjectDocument<T> extends AbstractDocument {
     }
     @Override
     public void put(Object key, Object value) {
+        if (key == null || (key.toString().trim().isEmpty())) {
+            return;
+        }
+        PutVisitor visitor = new PutVisitor(this);
+        visitor.visitDocument(key.toString(), value);
+        
+        if ( visitor.getException() != null ) {
+            RuntimeException re = (RuntimeException)visitor.getException();
+            throw re;
+        }
+        
+        //return visitor.getResult();
+
+    }
+    //@Override
+    public void putOld(Object key, Object value) {
         if (key == null || (key.toString().trim().isEmpty())) {
             return;
         }
@@ -56,7 +72,7 @@ public class ObjectDocument<T> extends AbstractDocument {
             
         }
         
-        DocumentVisitor visitor = new DocumentVisitor(this);
+        GetVisitor visitor = new GetVisitor(this);
         if ( p.length > 1 ) {
             visitor.visitDocument(paths);            
             Object sourceObject = visitor.getResult();

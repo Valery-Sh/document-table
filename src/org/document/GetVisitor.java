@@ -12,14 +12,14 @@ import java.util.List;
  *
  * @author Valery
  */
-public class DocumentVisitor {
+public class GetVisitor {
 
     protected Document rootDoc;
     protected List<VisitorInfo> infoList;
     protected String key;
     protected String[] paths;
 
-    public DocumentVisitor(Document rootDoc) {
+    public GetVisitor(Document rootDoc) {
         this.rootDoc = rootDoc;
         infoList = new ArrayList<VisitorInfo>();
     }
