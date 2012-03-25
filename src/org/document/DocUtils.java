@@ -150,6 +150,37 @@ public class DocUtils {
         
         throw new NullPointerException("An object of type " + obj.getClass() + " doesn't contain a field with a name " + key + "(" + error + ")");
     }
+
+    public static Object setValue(String key,Object obj, Object newValue) {
+        String error = "";
+        if ( obj instanceof Map ) {
+            return ((Map)obj).put(key,newValue);
+        }
+        try {
+            BeanInfo binfo = Introspector.getBeanInfo(obj.getClass(), Object.class);
+            PropertyDescriptor[] props = binfo.getPropertyDescriptors();
+            
+            for (int i = 0; i < props.length; i++) {
+                String pname = props[i].getName();
+                if ( key.equals(pname) ) {
+                    Method m = props[i].getWriteMethod();
+                    m.invoke(obj, newValue);
+                    m = props[i].getReadMethod();
+                    return m.invoke(obj, null);
+                }
+
+            }//for
+
+        } catch (IntrospectionException ex) {
+            error = ex.getMessage();
+        } catch (IllegalAccessException ex) {
+            error = ex.getMessage();
+        } catch (java.lang.reflect.InvocationTargetException ex) { 
+            error = ex.getMessage();
+        }
+        
+        throw new NullPointerException("An object of type " + obj.getClass() + " doesn't contain a field with a name " + key + "(" + error + ")");
+    }
     
     public static boolean isValueType(Class type) {
         return type.isPrimitive()
