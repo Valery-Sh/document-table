@@ -58,7 +58,12 @@ public class Field {
     public void add(SchemaType type) {
         supportedTypes.add(type);
     }
-    
+    public SchemaType getDefaultType() {
+        if ( this.supportedTypes.isEmpty() ) {
+            return new ValueType(Object.class);
+        }
+        return this.supportedTypes.get(0);
+    }
     protected List<SchemaType> getSupportedTypes() {
         return supportedTypes;
     }

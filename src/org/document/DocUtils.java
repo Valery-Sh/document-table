@@ -337,4 +337,17 @@ public class DocUtils {
         }
         return r;
     }
+    
+    public static String[] split(String key, char dlm) {
+        String k = key.trim();
+        if ((!k.isEmpty()) && key.charAt(0) == dlm) {
+            k = key.substring(1);
+        }
+        String[] result = k.split(String.valueOf(dlm));
+        for (int i = 0; i < result.length; i++) {
+            result[i] = result[i].trim();
+        }
+        return result;
+    }
+    
 }

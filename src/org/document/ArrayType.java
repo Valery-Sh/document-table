@@ -13,7 +13,7 @@ import java.util.List;
  * 
  * @author V. Shyshkin
  */
-public class ArrayType implements SchemaType {
+public class ArrayType implements SchemaType, HasSupportedTypes {
 
     private List defaultValue;
     protected List<SchemaType> supportedTypes;
@@ -70,6 +70,7 @@ public class ArrayType implements SchemaType {
         return supportedTypes;
     }
 
+    @Override
     public SchemaType getSupportedType(Class type) {
         SchemaType result = null;
         for (SchemaType st : getSupportedTypes()) {

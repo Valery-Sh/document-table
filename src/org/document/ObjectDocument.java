@@ -163,10 +163,10 @@ public class ObjectDocument<T> extends AbstractDocument {
         }
     }
 */
-    protected SchemaType getSupportedType(Field f) {
+/*    protected SchemaType getSupportedType(Field f) {
         return f.getSupportedTypes().get(0);
     }
-
+*/
     //@Override
   /*  public Object getOLD(Object key) {
         if (key == null || (key.toString().trim().isEmpty())) {
@@ -187,31 +187,17 @@ public class ObjectDocument<T> extends AbstractDocument {
         if (key == null || (key.toString().trim().isEmpty())) {
             return null;
         }
-        String[] paths = split(key.toString(), '/');
+        String[] paths = DocUtils.split(key.toString(), '/');
         // Me must keep in mind that a field may be in 'tail'
         Field f = getSchema().getField(paths[0]);
-        DocumentVisitor visitor = new DocumentVisitor(key.toString());
-        visitor.visitDocument(this);
+        DocumentVisitor visitor = new DocumentVisitor(this);
+        visitor.visitDocument(key.toString());
         if ( visitor.getException() != null ) {
             RuntimeException re = (RuntimeException)visitor.getException();
             throw re;
         }
         return visitor.getResult();
     }
-    
-    
-    protected String[] split(String key, char dlm) {
-        String k = key.trim();
-        if ((!k.isEmpty()) && key.charAt(0) == dlm) {
-            k = key.substring(1);
-        }
-        String[] result = k.split(String.valueOf(dlm));
-        for (int i = 0; i < result.length; i++) {
-            result[i] = result[i].trim();
-        }
-        return result;
-    }
-    
     @Override
     public DocumentSchema getSchema() {
         DocumentSchema ds;

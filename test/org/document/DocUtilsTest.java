@@ -325,5 +325,27 @@ public class DocUtilsTest {
         assertEquals(String[][].class,result.getClass());
         assertEquals(0,((String[][])result).length);
     }
+    /**
+     * Test of split method, of class ObjectDocument.
+     */
+    @Test
+    public void testSplit() {
+        System.out.println("split");
+        String key = "";
+        char dlm = '/';
+        String[] expResult = new String[] {""};
+        String[] result = DocUtils.split(key, dlm);
+        assertArrayEquals(expResult, result);
+        
+        key = "name1 /name2/ name3";
+        expResult = new String[] {"name1","name2","name3"};
+        result = DocUtils.split(key, dlm);
+        assertArrayEquals(expResult, result);
+
+        key = "/name1 /name2/ name3";
+        expResult = new String[] {"name1","name2","name3"};
+        result = DocUtils.split(key, dlm);
+        assertArrayEquals(expResult, result);
+    }
     
 }

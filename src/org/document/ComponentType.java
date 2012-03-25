@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Valery
  */
-public class ComponentType implements SchemaType {
+public class ComponentType implements SchemaType, HasSupportedTypes {
 
     protected List<SchemaType> supportedTypes;
     private Class javaType;
@@ -57,6 +57,7 @@ public class ComponentType implements SchemaType {
         }
     }
 
+    @Override
     public SchemaType getSupportedType(Class type) {
         SchemaType result = null;
         for (SchemaType st : getSupportedTypes()) {

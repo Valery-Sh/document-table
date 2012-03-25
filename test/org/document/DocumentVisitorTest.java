@@ -67,14 +67,14 @@ public class DocumentVisitorTest {
         Object result = document.get("family");
         
         
-        DocumentVisitor instance = new DocumentVisitor("firstName");
-        instance.visitDocument(document);
+        DocumentVisitor instance = new DocumentVisitor(document);
+        instance.visitDocument("firstName");
         assertEquals(1,instance.infoList.size());
         VisitorInfo vinfo = instance.infoList.get(instance.infoList.size()-1);
         assertEquals("Bill",vinfo.getResult());
 
-        instance = new DocumentVisitor("order/orderNum");
-        instance.visitDocument(document);
+        //instance = new DocumentVisitor(document);
+        instance.visitDocument("order/orderNum");
         assertEquals(125L,instance.getResult());
         
         
@@ -82,8 +82,8 @@ public class DocumentVisitorTest {
         // fail when field doesn't exist
         //
         try {
-            instance = new DocumentVisitor("frstName");
-            instance.visitDocument(document);            
+            //instance = new DocumentVisitor(document);
+            instance.visitDocument("frstName");            
             if ( instance.getException() != null ) {
                 throw (NullPointerException)instance.getException();
             }
@@ -98,8 +98,8 @@ public class DocumentVisitorTest {
             Person person1 = new Person(null,"Smith", new Date(), 1);
             ObjectDocument doc = new ObjectDocument(person1);
             
-            DocumentVisitor instance1 = new DocumentVisitor("firstName/lastName");
-            instance1.visitDocument(doc);            
+            DocumentVisitor instance1 = new DocumentVisitor(doc);
+            instance1.visitDocument("firstName/lastName");            
             if ( instance1.getException() != null ) {
                 throw (NullPointerException)instance1.getException();
             }
@@ -113,8 +113,8 @@ public class DocumentVisitorTest {
         try {
             Person person1 = new Person("Bill","Smith", new Date(), 1);
             ObjectDocument doc = new ObjectDocument(person1);
-            DocumentVisitor instance1 = new DocumentVisitor("firstName/lastName");
-            instance1.visitDocument(doc);            
+            DocumentVisitor instance1 = new DocumentVisitor(doc);
+            instance1.visitDocument("firstName/lastName");            
             if ( instance1.getException() != null ) {
                 throw (IllegalArgumentException)instance1.getException();
             }
@@ -125,8 +125,8 @@ public class DocumentVisitorTest {
 
         
         expResult = 125L;
-        instance = new DocumentVisitor("order/orderNum");
-        instance.visitDocument(document);
+        //instance = new DocumentVisitor("order/orderNum");
+        instance.visitDocument("order/orderNum");
         
         result = instance.getResult();
         assertEquals(expResult, result);
@@ -150,18 +150,17 @@ public class DocumentVisitorTest {
         Object result = document.get("family");
         
         
-        DocumentVisitor instance = new DocumentVisitor("firstName");
-        instance.visitDocument(document);
+        DocumentVisitor instance = new DocumentVisitor(document);
+        instance.visitDocument("firstName");
         assertEquals(1,instance.infoList.size());
         VisitorInfo vinfo = instance.infoList.get(instance.infoList.size()-1);
         assertEquals("Bill",vinfo.getResult());
 
-        instance = new DocumentVisitor("order/orderNum");
-        instance.visitDocument(document);
+        
+        instance.visitDocument("order/orderNum");
         assertEquals(125L,instance.getResult());
 
-        instance = new DocumentVisitor("order");
-        instance.visitDocument(document);
+        instance.visitDocument("order");
         assertEquals(exporder,instance.getResult());
         instance.continueVisit("orderNum");
         assertEquals(125L,instance.getResult());
@@ -170,8 +169,7 @@ public class DocumentVisitorTest {
         // fail when field doesn't exist
         //
         try {
-            instance = new DocumentVisitor("frstName");
-            instance.visitDocument(document);            
+            instance.visitDocument("frstName");            
             if ( instance.getException() != null ) {
                 throw (NullPointerException)instance.getException();
             }
@@ -186,8 +184,8 @@ public class DocumentVisitorTest {
             Person person1 = new Person(null,"Smith", new Date(), 1);
             ObjectDocument doc = new ObjectDocument(person1);
             
-            DocumentVisitor instance1 = new DocumentVisitor("firstName/lastName");
-            instance1.visitDocument(doc);            
+            DocumentVisitor instance1 = new DocumentVisitor(doc);
+            instance1.visitDocument("firstName/lastName");            
             if ( instance1.getException() != null ) {
                 throw (NullPointerException)instance1.getException();
             }
@@ -201,8 +199,8 @@ public class DocumentVisitorTest {
         try {
             Person person1 = new Person("Bill","Smith", new Date(), 1);
             ObjectDocument doc = new ObjectDocument(person1);
-            DocumentVisitor instance1 = new DocumentVisitor("firstName/lastName");
-            instance1.visitDocument(doc);            
+            DocumentVisitor instance1 = new DocumentVisitor(doc);
+            instance1.visitDocument("firstName/lastName");            
             if ( instance1.getException() != null ) {
                 throw (IllegalArgumentException)instance1.getException();
             }
@@ -213,8 +211,7 @@ public class DocumentVisitorTest {
 
         
         expResult = 125L;
-        instance = new DocumentVisitor("order/orderNum");
-        instance.visitDocument(document);
+        instance.visitDocument("order/orderNum");
         
         result = instance.getResult();
         assertEquals(expResult, result);
@@ -276,8 +273,8 @@ public class DocumentVisitorTest {
         // Array of type String[]
         //
         ObjectDocument document = new ObjectDocument(owa);
-        DocumentVisitor instance = new DocumentVisitor("stringArray","0");
-        instance.visitDocument(document);
+        DocumentVisitor instance = new DocumentVisitor(document);
+        instance.visitDocument("stringArray","0");
         Object result = instance.getResult();
         assertEquals("str1",result);
         
@@ -285,19 +282,16 @@ public class DocumentVisitorTest {
         // Two dimentional array of type String[][]
         //
         
-        instance = new DocumentVisitor("stringStringArray","0");
-        instance.visitDocument(document);
+        
+        instance.visitDocument("stringStringArray","0");
         result = instance.getResult();
         assertArrayEquals(expstringStringArray[0],(String[])result);        
 
-        instance = new DocumentVisitor("stringStringArray","0","0");
-        instance.visitDocument(document);
+        instance.visitDocument("stringStringArray","0","0");
         result = instance.getResult();
         assertEquals("[0,0]",result);      
         
-        
-        instance = new DocumentVisitor("stringStringArray","1","1");
-        instance.visitDocument(document);
+        instance.visitDocument("stringStringArray","1","1");
         result = instance.getResult();
         assertEquals("[1,1]",result);        
        //

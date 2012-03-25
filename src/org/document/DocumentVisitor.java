@@ -19,22 +19,27 @@ public class DocumentVisitor {
     protected String key;
     protected String[] paths;
 
-    public DocumentVisitor(String key) {
-        this.key = key;
-        //paths = split(key,'/');
+    public DocumentVisitor(Document rootDoc) {
+        this.rootDoc = rootDoc;
         infoList = new ArrayList<VisitorInfo>();
-
     }
 
-    public DocumentVisitor(String ... keys) {
+    public void visitDocument(String ... keys) {
         this.key = "";
         for ( int i=0; i < keys.length;i++) {
             key += keys[i] + "/";
         }
-        this.paths = keys;
-        //paths = split(key,'/');
+        visitDocument(key);
+    }
+    public void visitDocument(String key) {
+        paths = DocUtils.split(key, '/');
         infoList = new ArrayList<VisitorInfo>();
-
+        Field f = rootDoc.getSchema().getField(paths[0]);
+        if (f.isTail()) {
+            visitEmbedded(new EmbeddedType(rootDoc.getSchema()), ((ObjectDocument) rootDoc).tail);
+        } else {
+            visitEmbedded(new EmbeddedType(rootDoc.getSchema()), ((ObjectDocument) rootDoc).getDataObject());
+        }
     }
 
     public void continueVisit(String ... addKeys) {
@@ -86,43 +91,17 @@ public class DocumentVisitor {
         
     }
     
-    protected String[] split(String key, char dlm) {
-        String k = key.trim();
-        if ((!k.isEmpty()) && key.charAt(0) == dlm) {
-            k = key.substring(1);
-        }
-        String[] result = k.split(String.valueOf(dlm));
-        for (int i = 0; i < result.length; i++) {
-            result[i] = result[i].trim();
-        }
-        return result;
-    }
 
-    public void visitDocument(Document doc) {
-        this.rootDoc = doc;
-        paths = split(key, '/');
-        //VisitorInfo info = new VisitorInfo(doc);
-        //infoList.add(info);
-        Field f = doc.getSchema().getField(paths[0]);
-        if (f.isTail()) {
-            //return getFromEmbedded(tail, paths, 0, getSchema());
-            visitEmbedded(new EmbeddedType(doc.getSchema()), ((ObjectDocument) doc).tail);
-        } else {
-            visitEmbedded(new EmbeddedType(doc.getSchema()), ((ObjectDocument) doc).getDataObject());
-        }
-        //return getFromEmbedded(doc.getDataObject(), paths, 0, getSchema());
-
-
-
-    }
 
     public void visitEmbedded(SchemaType schemaType, Object sourceObject) {
         EmbeddedType embeddedType = (EmbeddedType) schemaType;        
-        VisitorInfo info = new VisitorInfo(embeddedType, sourceObject);
+        VisitorInfo info = new VisitorInfo(schemaType, sourceObject);
         infoList.add(info);
         DocumentSchema ds = embeddedType.getSchema();
         int pathIndex = infoList.size() - 1;
         Field f = ds.getField(paths[pathIndex]);
+        SchemaType st = f.getDefaultType();        
+        
         String path = "";
         for (int i = 0; i <= pathIndex; i++) {
             path += "/" + paths[i];
@@ -149,7 +128,7 @@ public class DocumentVisitor {
             return;
         }
         
-        SchemaType st = f.getSupportedTypes().get(0);
+        //SchemaType st = f.getSupportedTypes().get(0);
         
         if (DocUtils.isArrayType(result.getClass())) {
             visitArray(st, result);
@@ -160,7 +139,8 @@ public class DocumentVisitor {
         }
     }
     public void visitArray(SchemaType schemaType, Object sourceObject) {
-        ArrayType arrayType = (ArrayType)schemaType;
+        visit(schemaType, sourceObject);
+/*        ArrayType arrayType = (ArrayType)schemaType;
         VisitorInfo info = new VisitorInfo(arrayType, sourceObject);
         infoList.add(info);
         int idx = infoList.size() - 1;
@@ -212,10 +192,115 @@ public class DocumentVisitor {
         } else if (DocUtils.isEmbeddedType(result.getClass())) {
             visitEmbedded(st,result);
         }
+     */
+    }
+    protected void visit(SchemaType schemaType,Object sourceObject) {
+        VisitorInfo info = new VisitorInfo(schemaType, sourceObject);
+        infoList.add(info);
+        int idx = infoList.size() - 1;
+                
+        int index;
+        String path = "";
         
+        for (int i = 0; i <= idx; i++) {
+            path += "/" + paths[i];
+        }
+        try {
+            index = Integer.parseInt(paths[idx]);
+        } catch (NumberFormatException e) {
+            info.setException(new NumberFormatException("Path '" + path + "' for ArrayType index requies integer type. " + e.getMessage()));
+            return;
+        }
+
+        Object result;
+        try {
+            if ( sourceObject.getClass().isArray()) {
+                result = Array.get(sourceObject, index);
+            } else {
+                result = ((List)sourceObject).get(index);
+            }
+        } catch (IndexOutOfBoundsException e) {
+            info.setException(new IndexOutOfBoundsException("Path '" + path + "'. index==" + index + ". " + e.getMessage()));
+            return;
+        }
+        info.setResult(result);
+        if (idx == paths.length - 1) {
+            return;
+        }
+        if (result == null) {
+            info.setException(new NullPointerException("Null value for key path '" + path + "'"));
+            return;
+        }
+
+        if (DocUtils.isValueType(result.getClass())) {
+            info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));
+            return;
+        }
+        
+        SchemaType st = ((HasSupportedTypes)schemaType).getSupportedType(result.getClass());
+        if (DocUtils.isArrayType(result.getClass())) {
+            visitArray(st, result);
+        } else if (DocUtils.isComponentType(result.getClass())) {
+            visitComponent(st, result);            
+        } else if (DocUtils.isEmbeddedType(result.getClass())) {
+            visitEmbedded(st,result);
+        }
         
     }
+    
     public void visitComponent(SchemaType schemaType,Object sourceObject) {
+        visit(schemaType, sourceObject);        
+        //ComponentType componentType  = (ComponentType) schemaType;      
+/*        VisitorInfo info = new VisitorInfo(schemaType, sourceObject);
+        infoList.add(info);
+        int idx = infoList.size() - 1;
+                
+        int index;
+        String path = "";
+        
+        for (int i = 0; i <= idx; i++) {
+            path += "/" + paths[i];
+        }
+        try {
+            index = Integer.parseInt(paths[idx]);
+        } catch (NumberFormatException e) {
+            info.setException(new NumberFormatException("Path '" + path + "' for ArrayType index requies integer type. " + e.getMessage()));
+            return;
+        }
+
+        Object result;
+        try {
+            result = Array.get(sourceObject, index);
+        } catch (IndexOutOfBoundsException e) {
+            info.setException(new IndexOutOfBoundsException("Path '" + path + "'. index==" + index + ". " + e.getMessage()));
+            return;
+        }
+        info.setResult(result);
+        if (idx == paths.length - 1) {
+            return;
+        }
+        if (result == null) {
+            info.setException(new NullPointerException("Null value for key path '" + path + "'"));
+            return;
+        }
+
+        if (DocUtils.isValueType(result.getClass())) {
+            info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));
+            return;
+        }
+        
+        SchemaType st = ((HasSupportedTypes)schemaType).getSupportedType(result.getClass());
+        if (DocUtils.isArrayType(result.getClass())) {
+            visitArray(st, result);
+        } else if (DocUtils.isComponentType(result.getClass())) {
+            visitComponent(st, result);            
+        } else if (DocUtils.isEmbeddedType(result.getClass())) {
+            visitEmbedded(st,result);
+        }
+*/
+        
+    }
+    public void visitComponentOld(SchemaType schemaType,Object sourceObject) {
         ComponentType componentType  = (ComponentType) schemaType;      
         VisitorInfo info = new VisitorInfo(componentType, sourceObject);
         infoList.add(info);
@@ -240,7 +325,6 @@ public class DocumentVisitor {
         } catch (IndexOutOfBoundsException e) {
             info.setException(new IndexOutOfBoundsException("Path '" + path + "'. index==" + index + ". " + e.getMessage()));
             return;
-            //throw new IndexOutOfBoundsException("Path '" + path + "'. index==" + index + ". " + e.getMessage());
         }
         info.setResult(result);
         if (idx == paths.length - 1) {
@@ -255,6 +339,7 @@ public class DocumentVisitor {
             info.setException(new IllegalArgumentException("Path '" + path + "': requires ValueType"));
             return;
         }
+        
         SchemaType st = componentType.getSupportedType(result.getClass());
         if (DocUtils.isArrayType(result.getClass())) {
             visitArray(st, result);
