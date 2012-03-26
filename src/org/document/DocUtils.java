@@ -86,11 +86,11 @@ public class DocUtils {
      *  </li> 
      *  <li>
      *      <i><b>Array type</b></i> means that the method 
-     *      <code>DocUtils.isArrayType(type)</code> 
+     *      <code>DocUtils.isListType(type)</code> 
      *      returns <code>true</code>. If the <code>type.isArray()</code> 
      *      is <code>true</code> then a supported type is represented
-     *      with a class <code>org.document.ComponentType</code>. 
-     *      Otherwise with a class <code>org.document.ArrayType</code>.
+     *      with a class <code>org.document.ArrayType</code>. 
+     *      Otherwise with a class <code>org.document.ListType</code>.
      * </li> 
      *  <li>
      *      <i><b>Embedded type</b></i> means that the method 
@@ -109,10 +109,10 @@ public class DocUtils {
         Field f = new Field(name, false, false);
         if (isValueType(type)) {
             f.add(new ValueType(type));
+        } else if (isListType(type)) {
+            f.add(new ListType(type));
         } else if (isArrayType(type)) {
-            f.add(new ArrayType(type));
-        } else if (isComponentType(type)) {
-                f.add(new ComponentType(type));
+                f.add(new ArrayType(type));
         } else if (DocumentReference.class.isAssignableFrom(type)) {
             f.add(new ReferenceType());
         } else {
@@ -201,17 +201,17 @@ public class DocUtils {
                 || type.equals(BigDecimal.class);
     }
 
-    public static boolean isArrayType(Class type) {
+    public static boolean isListType(Class type) {
         return List.class.isAssignableFrom(type);
     }
 
-    public static boolean isComponentType(Class type) {
+    public static boolean isArrayType(Class type) {
         return  type.isArray();
     }
 
     
     public static boolean isEmbeddedType(Class type) {
-        return  ! ( isArrayType(type) || isComponentType(type) || isValueType(type));
+        return  ! ( isListType(type) || isArrayType(type) || isValueType(type));
 
     }
     
@@ -238,7 +238,7 @@ public class DocUtils {
         return target;
     }
 
-    public static Object newComponentTypeInstance(Class type) {
+    public static Object newArrayTypeInstance(Class type) {
 
         if (type == null || !type.isArray()) {
             return null;

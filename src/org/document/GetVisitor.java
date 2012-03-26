@@ -17,14 +17,6 @@ public class GetVisitor extends DocumentVisitor{
     }
 
     @Override
-    public void visitDocument(String ... keys) {
-        this.key = "";
-        for ( int i=0; i < keys.length;i++) {
-            key += keys[i] + "/";
-        }
-        visitDocument(key);
-    }
-    @Override
     public void visitDocument(String key) {
         paths = DocUtils.split(key, '/');
         infoList = new ArrayList<DocumentVisitor.VisitorInfo>();
@@ -65,20 +57,20 @@ public class GetVisitor extends DocumentVisitor{
             return;
         }
         SchemaType st;
-        if (info.getSourceSchemaType() instanceof ArrayType ) {
+        if (info.getSourceSchemaType() instanceof ListType ) {
+            st = ((ListType)info.getSourceSchemaType()).getSupportedType(result.getClass());
+        } else if (info.getSourceSchemaType() instanceof ArrayType ) {
             st = ((ArrayType)info.getSourceSchemaType()).getSupportedType(result.getClass());
-        } else if (info.getSourceSchemaType() instanceof ComponentType ) {
-            st = ((ComponentType)info.getSourceSchemaType()).getSupportedType(result.getClass());
         } else {
             String nm = paths[infoList.size()-1];
             Field f = ((EmbeddedType)info.getSourceSchemaType()).getSchema().getField(nm);
             st = f.getSupportedTypes().get(0);
         }
         
-        if (DocUtils.isArrayType(result.getClass())) {
-            visitArray((ArrayType)st, result);
-        } else if (DocUtils.isComponentType(result.getClass())) {
-            visitComponent((ComponentType)st, result);            
+        if (DocUtils.isListType(result.getClass())) {
+            visitList((ListType)st, result);
+        } else if (DocUtils.isArrayType(result.getClass())) {
+            visitArray((ArrayType)st, result);            
         } else {
             visitEmbedded((EmbeddedType)st,result);
         }
@@ -128,17 +120,17 @@ public class GetVisitor extends DocumentVisitor{
         
         //SchemaType st = f.getSupportedTypes().get(0);
         
-        if (DocUtils.isArrayType(result.getClass())) {
-            visitArray(st, result);
-        } else if (DocUtils.isComponentType(result.getClass())) {
-            visitComponent(st, result);            
+        if (DocUtils.isListType(result.getClass())) {
+            visitList(st, result);
+        } else if (DocUtils.isArrayType(result.getClass())) {
+            visitArray(st, result);            
         } else {
             visitEmbedded(st,result);
         }
     }
     
     @Override
-    public void visitArray(SchemaType schemaType, Object sourceObject) {
+    public void visitList(SchemaType schemaType, Object sourceObject) {
         VisitorInfo info = new VisitorInfo(schemaType, sourceObject);
         infoList.add(info);
         int idx = infoList.size() - 1;
@@ -187,31 +179,51 @@ public class GetVisitor extends DocumentVisitor{
             return;
         }
         
-        if (DocUtils.isArrayType(result.getClass())) {
-            visitArray(st, result);
-        } else if (DocUtils.isComponentType(result.getClass())) {
-            visitComponent(st, result);            
+        if (DocUtils.isListType(result.getClass())) {
+            visitList(st, result);
+        } else if (DocUtils.isArrayType(result.getClass())) {
+            visitArray(st, result);            
         } else if (DocUtils.isEmbeddedType(result.getClass())) {
             visitEmbedded(st,result);
         }
     }
 
-    public void visitComponent(SchemaType schemaType,Object sourceObject) {
-        visitArray(schemaType, sourceObject);        
+    @Override
+    public void visitArray(SchemaType schemaType,Object sourceObject) {
+        visitList(schemaType, sourceObject);        
     }
     
+    @Override
     public VisitorInfo getInfo(int idx) {
         return this.infoList.get(idx);
     }
+    @Override
     public VisitorInfo getInfo() {
         return this.infoList.get(infoList.size()-1);
     }
     
+    @Override
     public Object getResult() {
         return this.infoList.get(infoList.size()-1).getResult();
     }
+    @Override
     public Exception getException() {
         return this.infoList.get(infoList.size()-1).getException();
+    }
+
+    @Override
+    public void visitEmbedded(SchemaType schemaType, Object sourceObject, Object value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void visitList(SchemaType schemaType, Object sourceObject, Object value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void visitArray(SchemaType schemaType, Object sourceObject, Object value) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

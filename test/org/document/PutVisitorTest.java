@@ -60,12 +60,12 @@ public class PutVisitorTest {
     }
 
     /**
-     * Test of visitPutArray method, of class GetVisitor.
+     * Test of visittArray method, of class GetVisitor.
      */
     @Test
-    public void testVisitPutArray() {
-        System.out.println("DocumentVisitor: visitPutArray");
-        SchemaType atype = new ComponentType(String[].class);
+    public void testVisitArray() {
+        System.out.println("DocumentVisitor: visitArray");
+        SchemaType atype = new ArrayType(String[].class);
         Object sourceObject = new String[] {"[0]","[1]"};
         Person person = new Person("Bill","Smith", new Date(), 1);
         
@@ -87,7 +87,7 @@ public class PutVisitorTest {
 
         visitor = new PutVisitor(doc);        
         visitor.setPaths("0");
-        atype = new ComponentType(String[][].class);
+        atype = new ArrayType(String[][].class);
         visitor.visitArray(atype, sourceObject, newValue);
         result = visitor.getResult();
         assertArrayEquals((String[])expResult,(String[])result);
@@ -98,7 +98,7 @@ public class PutVisitorTest {
         newValue = "element2";
         visitor = new PutVisitor(doc);        
         visitor.setPaths("1");
-        atype = new ArrayType(List.class);
+        atype = new ListType(List.class);
         visitor.visitArray(atype, sourceObject, newValue);
         result = visitor.getResult();
         assertEquals("element2",result);

@@ -75,13 +75,13 @@ public class DocUtilsTest {
         assertNotNull(f);
         assertEquals(f.getName(),"sex");
         //
-        // ArrayType
+        // ListType
         //
         f = schema.getField("family");
         assertNotNull(f);
         assertEquals(f.getName(),"family");
-        assertEquals(ArrayType.class,f.getSupportedTypes().get(0).getClass());
-        ArrayType at = (ArrayType)f.getSupportedTypes().get(0);
+        assertEquals(ListType.class,f.getSupportedTypes().get(0).getClass());
+        ListType at = (ListType)f.getSupportedTypes().get(0);
         
         //
         // embedded
@@ -113,17 +113,17 @@ public class DocUtilsTest {
     @Test
     public void testIsArrayType() {
         System.out.println("DocUtils: isArrayType(Class)");
-        boolean result = DocUtils.isArrayType(ArrayList.class);
+        boolean result = DocUtils.isListType(ArrayList.class);
         assertTrue(result);
 
-        result = DocUtils.isArrayType(List.class);
+        result = DocUtils.isListType(List.class);
         assertTrue(result);
-        result = DocUtils.isArrayType(Map.class);
+        result = DocUtils.isListType(Map.class);
         assertFalse(result);
-        result = DocUtils.isArrayType(Set.class);
+        result = DocUtils.isListType(Set.class);
         assertFalse(result);
 
-        result = DocUtils.isArrayType(int.class);
+        result = DocUtils.isListType(int.class);
         assertFalse(result);
     }
     
@@ -320,7 +320,7 @@ public class DocUtilsTest {
     public void testNewArrayInstance() {
         String[][] instance = new String[2][3];
         
-        Object result = DocUtils.newComponentTypeInstance(instance.getClass());
+        Object result = DocUtils.newArrayTypeInstance(instance.getClass());
         assertNotNull(result);
         assertEquals(String[][].class,result.getClass());
         assertEquals(0,((String[][])result).length);

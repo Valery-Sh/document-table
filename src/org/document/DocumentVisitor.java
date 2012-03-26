@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author V. Shyshkin
  */
-public class DocumentVisitor {
+public abstract  class DocumentVisitor {
 
     protected Document rootDoc;
     protected List<DocumentVisitor.VisitorInfo> infoList;
@@ -19,16 +19,11 @@ public class DocumentVisitor {
         infoList = new ArrayList<DocumentVisitor.VisitorInfo>();
     }
 
-    public void visitDocument(String ... keys) {
-        this.key = "";
-        for ( int i=0; i < keys.length;i++) {
-            key += keys[i] + "/";
-        }
-        visitDocument(key);
-    }
     public void visitDocument(String key) {
         paths = DocUtils.split(key, '/');
         infoList = new ArrayList<DocumentVisitor.VisitorInfo>();
+    }
+    public void visitDocument(String key,Object value) {
     }
 
     public void setPaths(String ... path) {
@@ -36,14 +31,13 @@ public class DocumentVisitor {
     }
 
 
-    public void visitEmbedded(SchemaType schemaType, Object sourceObject) {
-    }
+    public abstract void visitEmbedded(SchemaType schemaType, Object sourceObject);
     
-    public void visitArray(SchemaType schemaType, Object sourceObject) {
-    }
-
-    public void visitComponent(SchemaType schemaType,Object sourceObject) {
-    }
+    public abstract void visitList(SchemaType schemaType, Object sourceObject);
+    public abstract void visitArray(SchemaType schemaType,Object sourceObject);
+    public abstract void visitEmbedded(SchemaType schemaType, Object sourceObject, Object value);
+    public abstract void visitList(SchemaType schemaType, Object sourceObject, Object value);
+    public abstract void visitArray(SchemaType schemaType,Object sourceObject, Object value);
     
     public DocumentVisitor.VisitorInfo getInfo(int idx) {
         return this.infoList.get(idx);

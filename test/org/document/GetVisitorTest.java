@@ -232,7 +232,7 @@ public class GetVisitorTest {
     }
 
     /**
-     * Test of visitArray method, of class GetVisitor.
+     * Test of visitList method, of class GetVisitor.
      */
     @Test
     public void testVisitArray() {
@@ -240,12 +240,12 @@ public class GetVisitorTest {
     /*    ArrayType arrayType = null;
         Object sourceObject = null;
         GetVisitor document = null;
-        document.visitArray(arrayType, sourceObject);
+        document.visitList(arrayType, sourceObject);
 */    
     }
 
     /**
-     * Test of visitComponent method, of class GetVisitor.
+     * Test of visitArray method, of class GetVisitor.
      */
     @Test
     public void testVisitComponent() {
@@ -274,7 +274,7 @@ public class GetVisitorTest {
         //
         ObjectDocument document = new ObjectDocument(owa);
         GetVisitor instance = new GetVisitor(document);
-        instance.visitDocument("stringArray","0");
+        instance.visitDocument("stringArray/0");
         Object result = instance.getResult();
         assertEquals("str1",result);
         
@@ -283,15 +283,15 @@ public class GetVisitorTest {
         //
         
         
-        instance.visitDocument("stringStringArray","0");
+        instance.visitDocument("stringStringArray/0");
         result = instance.getResult();
         assertArrayEquals(expstringStringArray[0],(String[])result);        
 
-        instance.visitDocument("stringStringArray","0","0");
+        instance.visitDocument("stringStringArray/0/0");
         result = instance.getResult();
         assertEquals("[0,0]",result);      
         
-        instance.visitDocument("stringStringArray","1","1");
+        instance.visitDocument("stringStringArray/1/1");
         result = instance.getResult();
         assertEquals("[1,1]",result);        
        //

@@ -73,7 +73,7 @@ public class DefaultGroup extends AbstractDocumentGroup {
     public DocumentSchema getSchema(Document doc) {
         DocumentSchema schema = null;
         if ( doc instanceof ObjectDocument) {
-            schemas.get( ((ObjectDocument)doc).getDataObject().getClass() );
+            schema = schemas.get( ((ObjectDocument)doc).getDataObject().getClass() );
         }
         //TODO если не ObjectDocument
         return schema;

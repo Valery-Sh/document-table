@@ -8,66 +8,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a java class that implements 
- * <code>java.util.List</code> interface.
- * 
- * @author V. Shyshkin
+ *
+ * @author Valery
  */
 public class ArrayType implements SchemaType, HasSupportedTypes {
 
-    private List defaultValue;
     protected List<SchemaType> supportedTypes;
     private Class javaType;
 
+    /**
+     * Creates an instances of the class and appends an object
+     * <code>java.lang.Object.class</code> to a list of supported types
+     * (
+     * <code>supportedTypes</code>).
+     */
     public ArrayType() {
-        defaultValue = new ArrayList(2);
-        supportedTypes = new ArrayList();
+        super();
+        addSupported(new ValueType(Object.class));
     }
 
-    public ArrayType(Class javaType) {
-        this();
-        this.javaType = javaType;
-    }
-
-    public boolean isComponentType() {
-        return false;
-    }
-
-    @Override
-    public Class getJavaType() {
-        return javaType;
-    }
-
-    public void setJavaType(Class javaType) {
-        this.javaType = javaType;
+    /**
+     *
+     * @param type specifies a java array type
+     */
+    public ArrayType(Class type) {
+        this.javaType = type;
+        supportedTypes = new ArrayList<SchemaType>();
+        Class compType = type.getComponentType();
+        if (compType.isArray()) {
+            addSupported(new ArrayType(compType));
+        } else {
+            addByClass(compType);
+        }
     }
 
     public void addByClass(Class type) {
         if (DocUtils.isValueType(type)) {
             addSupported(new ValueType(type));
-        } else if (DocUtils.isArrayType(type) && type.isArray()) {
-            addSupported(new ComponentType(type));
-        } else if (DocUtils.isArrayType(type)) {
+        } else if (DocUtils.isListType(type) && type.isArray()) {
             addSupported(new ArrayType(type));
+        } else if (DocUtils.isListType(type)) {
+            addSupported(new ListType(type));
         } else if (DocumentReference.class.isAssignableFrom(type)) {
             addSupported(new ReferenceType());
         } else {
             DocumentSchema embSchema = DocUtils.createSchema(type);
             addSupported(new EmbeddedType(embSchema));
         }
-    }
-
-    public void addSupported(SchemaType type) {
-        if (isComponentType() && !supportedTypes.isEmpty()) {
-            supportedTypes.set(0, type);
-            //throw new IndexOutOfBoundsException("org.document.ComponentType may have only one supported type");
-        } else {
-            supportedTypes.add(type);
-        }
-    }
-
-    protected List<SchemaType> getSupportedTypes() {
-        return supportedTypes;
     }
 
     @Override
@@ -79,56 +66,50 @@ public class ArrayType implements SchemaType, HasSupportedTypes {
                 break;
             }
         }
-        if ( result == null && getSupportedTypes().isEmpty() ) {
-            if ( DocUtils.isValueType(type)) {
-                result = new ValueType(type);
-            } else if ( DocUtils.isArrayType(type)) {
-                 result = new ArrayType(type);
-            } else  if ( DocUtils.isComponentType(type)) {
-                 result = new ComponentType(type);
-            } else if ( DocUtils.isEmbeddedType(type)) {
-                DocumentSchema ds = DocUtils.createSchema(type);
-                result = new EmbeddedType(ds);
-            } 
-        }
         return result;
     }
 
-    public List getDefaultValue() {
-        return this.defaultValue;
+    public Class getBaseType() {
+
+        SchemaType c = this;
+        while (c instanceof ArrayType) {
+            if (supportedTypes.isEmpty()) {
+                break;
+            }
+            c = ((ArrayType) c).supportedTypes.get(0);
+        }
+        return c.getJavaType();
     }
 
-    public void setDefaultValue(List value) {
-        this.defaultValue = value;
-    }
+    public int getDimentionSize() {
+        int sz = 0;
+        SchemaType c = this;
+        while (c instanceof ArrayType) {
+            if (supportedTypes.isEmpty()) {
+                break;
+            }
+            c = ((ArrayType) c).supportedTypes.get(0);
+            sz++;
+        }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ArrayType other = (ArrayType) obj;
-        if (this.defaultValue != other.defaultValue && (this.defaultValue == null || !this.defaultValue.equals(other.defaultValue))) {
-            return false;
-        }
-        if (this.supportedTypes != other.supportedTypes && (this.supportedTypes == null || !this.supportedTypes.equals(other.supportedTypes))) {
-            return false;
-        }
-        if (this.javaType != other.javaType && (this.javaType == null || !this.javaType.equals(other.javaType))) {
-            return false;
-        }
-        return true;
+        return sz;
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 61 * hash + (this.defaultValue != null ? this.defaultValue.hashCode() : 0);
-        hash = 61 * hash + (this.supportedTypes != null ? this.supportedTypes.hashCode() : 0);
-        hash = 61 * hash + (this.javaType != null ? this.javaType.hashCode() : 0);
-        return hash;
+    public Class getJavaType() {
+        return this.javaType;
+    }
+
+    public void addSupported(SchemaType type) {
+        if (!supportedTypes.isEmpty()) {
+            supportedTypes.set(0, type);
+            //throw new IndexOutOfBoundsException("org.document.ArrayType may have only one supported type");
+        } else {
+            supportedTypes.add(type);
+        }
+    }
+
+    protected List<SchemaType> getSupportedTypes() {
+        return supportedTypes;
     }
 }
