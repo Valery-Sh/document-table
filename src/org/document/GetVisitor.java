@@ -193,7 +193,7 @@ public class GetVisitor extends DocumentVisitor{
         visitList(schemaType, sourceObject);        
     }
     
-    @Override
+/*    @Override
     public VisitorInfo getInfo(int idx) {
         return this.infoList.get(idx);
     }
@@ -210,7 +210,7 @@ public class GetVisitor extends DocumentVisitor{
     public Exception getException() {
         return this.infoList.get(infoList.size()-1).getException();
     }
-
+*/
     @Override
     public void visitEmbedded(SchemaType schemaType, Object sourceObject, Object value) {
         throw new UnsupportedOperationException("Not supported yet.");

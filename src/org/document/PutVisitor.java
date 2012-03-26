@@ -3,6 +3,7 @@ package org.document;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,7 +34,7 @@ public class PutVisitor extends DocumentVisitor {
 //            System.arraycopy(paths, 0, decrPaths, 0, paths.length - 1);
 
             decrPath = "";
-            for (int i = 0; i < paths.length-1; i++) {
+            for (int i = 0; i < paths.length - 1; i++) {
                 decrPath += "/" + paths[i];
             }
 
@@ -62,8 +63,6 @@ public class PutVisitor extends DocumentVisitor {
             RuntimeException re = (RuntimeException) visitor.getException();
             throw re;
         }
-
-
     }
 
     protected void visitPut(SchemaType schemaType, Object sourceObject, Object newValue) {
@@ -149,26 +148,19 @@ public class PutVisitor extends DocumentVisitor {
         }
     }
 
-    @Override
-    public GetVisitor.VisitorInfo getInfo(int idx) {
-        return this.infoList.get(idx);
-    }
-
-    @Override
-    public GetVisitor.VisitorInfo getInfo() {
-        return this.infoList.get(infoList.size() - 1);
-    }
-
-    @Override
-    public Object getResult() {
-        return this.infoList.get(infoList.size() - 1).getResult();
-    }
-
-    @Override
-    public Exception getException() {
-        return this.infoList.get(infoList.size() - 1).getException();
-    }
-
+    /*
+     * @Override public GetVisitor.VisitorInfo getInfo(int idx) { return
+     * this.infoList.get(idx); }
+     *
+     * @Override public GetVisitor.VisitorInfo getInfo() { return
+     * this.infoList.get(infoList.size() - 1); }
+     *
+     * @Override public Object getResult() { return
+     * this.infoList.get(infoList.size() - 1).getResult(); }
+     *
+     * @Override public Exception getException() { return
+     * this.infoList.get(infoList.size() - 1).getException(); }
+     */
     @Override
     public void visitEmbedded(SchemaType schemaType, Object sourceObject) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -186,6 +178,6 @@ public class PutVisitor extends DocumentVisitor {
 
     @Override
     public void visitArray(SchemaType schemaType, Object sourceObject, Object value) {
-        visitList(schemaType, sourceObject,value);
+        visitList(schemaType, sourceObject, value);
     }
 }

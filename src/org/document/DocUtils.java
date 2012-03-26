@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import org.document.impl.DefaultSchema;
+import org.document.impl.MapSchema;
 
 /**
  *
@@ -55,8 +56,11 @@ public class DocUtils {
     }
 
     public static DocumentSchema createSchema(Class clazz) {
-
-        DocumentSchema schema = new DefaultSchema(clazz);
+        DocumentSchema schema;
+        if ( isMapType(clazz)) {
+            return new MapSchema(clazz);
+        }
+        schema = new DefaultSchema(clazz);
         try {
             BeanInfo binfo = Introspector.getBeanInfo(clazz, Object.class);
             PropertyDescriptor[] props = binfo.getPropertyDescriptors();
@@ -154,7 +158,8 @@ public class DocUtils {
     public static Object setValue(String key,Object obj, Object newValue) {
         String error = "";
         if ( obj instanceof Map ) {
-            return ((Map)obj).put(key,newValue);
+            ((Map)obj).put(key,newValue);
+            return newValue;
         }
         try {
             BeanInfo binfo = Introspector.getBeanInfo(obj.getClass(), Object.class);
@@ -203,6 +208,9 @@ public class DocUtils {
 
     public static boolean isListType(Class type) {
         return List.class.isAssignableFrom(type);
+    }
+    public static boolean isMapType(Class type) {
+        return Map.class.isAssignableFrom(type);
     }
 
     public static boolean isArrayType(Class type) {

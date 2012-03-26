@@ -6,7 +6,9 @@ package org.document;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -25,6 +27,8 @@ public class Person implements Serializable{
 
     private List listOfList;  
     
+    private Map personProps;
+    
     //@Embedded
     
     private transient Order order;
@@ -34,6 +38,7 @@ public class Person implements Serializable{
        this.lastName = "Down";
        this.birthDay = null;
        this.sex = 1;
+       personProps = new HashMap();
     }
     
     public Person(String firstName,String lastName, Date birthDay, int sex) {
@@ -41,6 +46,7 @@ public class Person implements Serializable{
        this.lastName = lastName;
        this.birthDay = birthDay;
        this.sex = sex;
+       personProps = new HashMap();       
        
     }
     
@@ -101,6 +107,14 @@ public class Person implements Serializable{
         this.listOfList = listOfList;
     }
 
+    public Map getPersonProps() {
+        return personProps;
+    }
+
+    public void setPersonProps(Map personProps) {
+        this.personProps = personProps;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -122,13 +136,34 @@ public class Person implements Serializable{
         if (this.sex != other.sex) {
             return false;
         }
+        if (this.family != other.family && (this.family == null || !this.family.equals(other.family))) {
+            return false;
+        }
+        if (this.listOfList != other.listOfList && (this.listOfList == null || !this.listOfList.equals(other.listOfList))) {
+            return false;
+        }
+        if (this.personProps != other.personProps && (this.personProps == null || !this.personProps.equals(other.personProps))) {
+            return false;
+        }
+        if (this.order != other.order && (this.order == null || !this.order.equals(other.order))) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
+        hash = 89 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
+        hash = 89 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
+        hash = 89 * hash + (this.birthDay != null ? this.birthDay.hashCode() : 0);
+        hash = 89 * hash + this.sex;
+        hash = 89 * hash + (this.family != null ? this.family.hashCode() : 0);
+        hash = 89 * hash + (this.listOfList != null ? this.listOfList.hashCode() : 0);
+        hash = 89 * hash + (this.personProps != null ? this.personProps.hashCode() : 0);
+        hash = 89 * hash + (this.order != null ? this.order.hashCode() : 0);
         return hash;
     }
+
     
 }

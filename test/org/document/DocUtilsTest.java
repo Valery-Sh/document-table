@@ -52,8 +52,9 @@ public class DocUtilsTest {
      */
     @Test
     public void testCreateSchema() {
-        int elemCount = DocUtils.getFieldCount(Person.class);
         System.out.println("DocUtils: createSchema(Class)");        
+        
+        int elemCount = DocUtils.getFieldCount(Person.class);
         DocumentSchema schema = DocUtils.createSchema(Person.class);
         assertEquals(elemCount,schema.getFields().size());
         assertEquals(Person.class,schema.getMappingType());
@@ -108,6 +109,42 @@ public class DocUtilsTest {
         DocumentSchema mapsc = DocUtils.createSchema(ObjectWithMap.class);        
         
         
+    }
+    @Test
+    public void testCreateSchema_Map() {
+        System.out.println("DocUtils: createSchema(Map)");        
+        Person person = new Person("Bill","Smith", new Date(), 1);
+        Document instance = new ObjectDocument(person);
+       //
+       // Map Field with a name 'personProps'
+       //
+        
+       instance.put("personProps/weight",85);
+       Object result = instance.get("personProps/weight");
+       assertEquals(85, result);
+       DocumentSchema ds = instance.getSchema();
+       Field mapField = new Field("personProps");
+       Map tmp = new HashMap();
+       tmp.put("weight",90);
+       tmp.put("height",180);
+       tmp.put("face","round");
+       DocumentSchema mapSchema = DocUtils.createSchema(tmp);
+       EmbeddedType et = new EmbeddedType(mapSchema);
+       mapField.add(et);
+       int idx = ds.getFields().indexOf(ds.getField("personProps"));
+       ds.getFields().set(idx, mapField);
+       instance.put("personProps/height",176);
+       result = instance.get("personProps/height");       
+       assertEquals(176,result);
+       //
+       // Non-existent field ( requiers 'height' but found 'heght')
+       //
+       try {
+         instance.put("personProps/heght",173);
+         fail("No such property (heght)");
+       } catch(Exception e) {
+           System.out.println("No such property: name='heght'");
+       }
     }
     
     @Test

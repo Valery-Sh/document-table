@@ -4,10 +4,7 @@
  */
 package org.document;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -377,6 +374,50 @@ public class ObjectDocumentTest {
 
        result = instance.get("tail1");
        assertEquals("It is tale1 field value",result);
+       
+       //
+       // Map Field with a name 'personProps' 
+       // EmbeddedType with MapSchema
+       //
+       
+       instance = new ObjectDocument(person);
+       instance.put("personProps/weight",85);
+       result = instance.get("personProps/weight");
+       assertEquals(85, result);
+       //
+       // Non-existent field 'ttt' (always null)
+       //
+       result = instance.get("personProps/tttt");
+       assertNull(result);
+
+       //
+       // Now create a schema for a map field named 'personProps'
+       //
+       DocumentSchema ds = instance.getSchema();
+       Field mapField = new Field("personProps");
+       Map tmp = new HashMap();
+       tmp.put("weight",90);
+       tmp.put("height",180);
+       tmp.put("face","round");
+       DocumentSchema mapSchema = DocUtils.createSchema(tmp);
+       EmbeddedType et = new EmbeddedType(mapSchema);
+       mapField.add(et);
+       int idx = ds.getFields().indexOf(ds.getField("personProps"));
+       ds.getFields().set(idx, mapField);
+       instance.put("personProps/height",176);
+       result = instance.get("personProps/height");       
+       assertEquals(176,result);
+       //
+       // Non-existent field ( requiers 'height' but found 'heght')
+       //
+       try {
+         instance.put("personProps/heght",173);
+         fail("No such property (heght)");
+       } catch(Exception e) {
+           System.out.println("No such property: name='heght'");
+       }
+
+       
     }
 
 
