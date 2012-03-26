@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public interface DocumentSchema<K> {
     Class getMappingType();

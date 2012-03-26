@@ -19,6 +19,7 @@ import java.math.BigInteger;
 import java.util.*;
 import org.document.impl.DefaultSchema;
 import org.document.impl.MapSchema;
+import org.document.impl.NoFieldSchema;
 
 /**
  *
@@ -59,7 +60,10 @@ public class DocUtils {
         DocumentSchema schema;
         if ( isMapType(clazz)) {
             return new MapSchema(clazz);
+        } else if ( isSetType(clazz)) {
+            return new NoFieldSchema(clazz);
         }
+
         schema = new DefaultSchema(clazz);
         try {
             BeanInfo binfo = Introspector.getBeanInfo(clazz, Object.class);
@@ -211,6 +215,9 @@ public class DocUtils {
     }
     public static boolean isMapType(Class type) {
         return Map.class.isAssignableFrom(type);
+    }
+    public static boolean isSetType(Class type) {
+        return Set.class.isAssignableFrom(type);
     }
 
     public static boolean isArrayType(Class type) {
