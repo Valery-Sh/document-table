@@ -5,9 +5,11 @@
 package org.document;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.*;
 
 /**
  *
@@ -72,24 +74,28 @@ public class ListTypeTest {
     }
 
     /**
-     * Test of addSupportedByClass method, of class ListType.
+     * Test of put(class) method, of class ListType.ListTypeSet
      */
     @Test
-    public void testAddSupportedByClass() {
-        System.out.println("ListTypeTest: addSupportedByClass(Class)");
-        Class type = String.class;
+    public void testListType_ListTypeSet_Put() {
+        System.out.println("ListType.ListTypeSet: put(Class)");
+        
         ListType instance = new ListType();
-        instance.addSupportedByClass(type);
-        Object result = instance.getSupportedByClass(String.class);
-        assertNotNull(result);
+        instance.getSupportedSchemaTypes().put(String.class);
+        Object result = instance.getSupportedSchemaTypes().get(String.class);
+        assertEquals(new ValueType(String.class),result);
         assertTrue(result instanceof SchemaType);
-        result = instance.getSupportedByClass(Integer.class);
-        assertNull(result);
+        
+        instance.getSupportedSchemaTypes().put(Person[].class);
+        result = instance.getSupportedSchemaTypes().get(Person[].class);
+        assertEquals(new ArrayType(Person[].class),result);
+        
+        
         //
         // Exception when add primitive type
         //
         try {
-            instance.addSupportedByClass(int.class);
+            instance.getSupportedSchemaTypes().put(int.class);
             fail("Parameter cannot be primitive");
         } catch(IllegalArgumentException e) {
             System.out.println("Parameter cannot be primitive");
@@ -98,7 +104,7 @@ public class ListTypeTest {
         // Exception when add null
         //
         try {
-            instance.addSupportedByClass(null);
+            instance.getSupportedSchemaTypes().put(null);
             fail("Parameter cannot be nall");
         } catch(NullPointerException e) {
             System.out.println("Parameter cannot be null");
@@ -107,21 +113,21 @@ public class ListTypeTest {
     }
 
     /**
-     * Test of addSupported method, of class ListType.
+     * Test of add(SchemaType) method, of class ListType.ListTypeSet
      */
     @Test
-    public void testAddSupported() {
-        System.out.println("ListTypeTest: addSupported(SchemaType)");
+    public void testListType_ListTypeSet_Add() {
+        System.out.println("ListType.ListTypeSet: add(SchemaType)");
         SchemaType type = new ValueType(Integer.class);
         ListType instance = new ListType();
-        instance.addSupported(type);
-        Object result = instance.getSupportedByClass(int.class);
+        instance.getSupportedSchemaTypes().add(type);
+        Object result = instance.getSupportedSchemaTypes().get(int.class);
         assertEquals(new ValueType(Integer.class),result);
         //
         // Exception when add ValueType of primitive
         //
         try {
-            instance.addSupported(new ValueType(int.class));
+            instance.getSupportedSchemaTypes().add(new ValueType(int.class));
             fail("Value type cannot be primitive");
         } catch(IllegalArgumentException e) {
             System.out.println("Value type cannot be primitive");
@@ -130,7 +136,7 @@ public class ListTypeTest {
         // Exception when add null
         //
         try {
-            instance.addSupported(null);
+            instance.getSupportedSchemaTypes().add(null);
             fail("Parameter cannot be nall");
         } catch(NullPointerException e) {
             System.out.println("Parameter cannot be null");
@@ -142,59 +148,60 @@ public class ListTypeTest {
      * Test of getSupportedTypes method, of class ListType.
      */
     @Test
-    public void testGetSupportedTypes() {
-        System.out.println("ListTypeTest: getSupportedTypes()");
+    public void testGetSupportedSchemaTypes() {
+        System.out.println("ListType: getSupportedSchemaTypes()");
         ListType instance = new ListType();
-        List expResult = null;
-        List result = instance.getSupportedTypes();
+        HashSet result = instance.getSupportedSchemaTypes();
         assertTrue(result.isEmpty());
-        instance.addSupported(new ValueType(String.class));
-        result = instance.getSupportedTypes();        
+        instance.getSupportedSchemaTypes().add(new ValueType(String.class));
+        result = instance.getSupportedSchemaTypes();        
         assertTrue(result.size() == 1);
-        assertEquals(String.class, ((SchemaType)result.get(0)).getJavaType());
         
     }
 
     /**
-     * Test of getSupportedByClass method, of class ListType.
+     * Test of get(Class) method, of class ListType.ListTypeSet
      */
     @Test
-    public void testGetSupportedByClass() {
-        System.out.println("ListTypeTest: getSupportedByClass(Class)");
-        ListType instance = new ListType();
-        List expResult = null;
+    public void testListType_ListTypeSet_Get() {
+        System.out.println("ListType.ListTypeSet: get(Class)");
+        ListType.ListTypeSet instance = new ListType.ListTypeSet();
         //
         // When no supported type were specified it is considered
         // that any type is supported
         //
-        Object result = instance.getSupportedByClass(Integer.class);
+        Object result = instance.get(Integer.class);
         assertEquals(new ValueType(Integer.class),result);        
         // Primitive is replaced by wrapper
-        result = instance.getSupportedByClass(int.class);
+        result = instance.get(int.class);
         assertEquals(new ValueType(Integer.class),result); 
         // Java Beans
-        result = instance.getSupportedByClass(Person.class);
-        EmbeddedType et = new EmbeddedType(DocUtils.createSchema(Person.class));
-        assertEquals(et,result);        
+        result = instance.get(Person.class);
+        assertEquals(new EmbeddedType(Person.class),result);        
+        // Java array
+        result = instance.get(int[][].class);
+        assertEquals(new ArrayType(int[][].class),result);        
+        // array of Java Bean
+        result = instance.get(Person[].class);
+        assertEquals(new ArrayType(Person[].class),result);        
         
         //
         // Add supported type and try get it. Now only explicitly added 
         // supported types can be found
         //
-        instance.addSupported(new ValueType(Integer.class));
+        instance.add(new ValueType(Integer.class));
         // Java Bean
-        instance.addSupported(et);
-        result = instance.getSupportedByClass(Person.class);
-        EmbeddedType expet = new EmbeddedType(DocUtils.createSchema(Person.class));
-        assertEquals(expet,result);        
+        instance.add(new EmbeddedType(Person.class));
+        result = instance.get(Person.class);
+        assertEquals(new EmbeddedType(Person.class),result);        
         
-        result = instance.getSupportedByClass(Integer.class);
+        result = instance.get(Integer.class);
         assertEquals(new ValueType(Integer.class),result);
         // primitives are allowed
-        result = instance.getSupportedByClass(int.class);
+        result = instance.get(int.class);
         assertEquals(new ValueType(Integer.class),result);
         
-        result = instance.getSupportedByClass(String.class);
+        result = instance.get(String.class);
         assertNull(result);
         
     }
@@ -204,11 +211,14 @@ public class ListTypeTest {
      */
     @Test
     public void testGetDefaultValue() {
-        System.out.println("getDefaultValue");
+        System.out.println("ListType: getDefaultValue()");
         ListType instance = new ListType();
-        List expResult = null;
+        List expResult = new ArrayList();
         List result = instance.getDefaultValue();
-//        assertEquals(expResult, result);
+        assertEquals(expResult, result);
+        instance.setDefaultValue(new LinkedList());
+        result = instance.getDefaultValue();
+        assertEquals(new LinkedList(),result);
     }
 
     /**
@@ -216,10 +226,12 @@ public class ListTypeTest {
      */
     @Test
     public void testSetDefaultValue() {
-        System.out.println("setDefaultValue");
-        List value = null;
+        System.out.println("ListType: setDefaultValue(List)");
         ListType instance = new ListType();
-        instance.setDefaultValue(value);
+        instance.setDefaultValue(new LinkedList());
+        Object result = instance.getDefaultValue();
+        assertEquals(new LinkedList(),result);
+
     }
 
 }

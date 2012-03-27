@@ -75,4 +75,9 @@ public class ValueType implements SchemaType{
         return hash;
     }
 
+    @Override
+    public SchemaTypeSet getSupportedSchemaTypes() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

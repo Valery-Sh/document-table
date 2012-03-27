@@ -13,15 +13,15 @@ import java.util.List;
  *
  * @author V. Shyshkin
  */
-public class ListType implements SchemaType, HasSupportedTypes {
+public class ListType implements SchemaType {
 
     private List defaultValue;
-    protected List<SchemaType> supportedTypes;
+    protected SchemaTypeSet supportedSchemaTypes;
     private Class javaType;
 
     public ListType() {
         defaultValue = new ArrayList(2);
-        supportedTypes = new ArrayList();
+        supportedSchemaTypes = new ListType.ListTypeSet();
         javaType = List.class;
     }
 
@@ -38,7 +38,7 @@ public class ListType implements SchemaType, HasSupportedTypes {
     public void setJavaType(Class javaType) {
         this.javaType = javaType;
     }
-
+/*
     public void addSupportedByClass(Class type) {
         if (type == null) {
             throw new NullPointerException("ListType.addSupportedByClass(null)");
@@ -49,10 +49,10 @@ public class ListType implements SchemaType, HasSupportedTypes {
                 throw new IllegalArgumentException("ListType doesn't support primitive value type {" + type + "}. ");
             }
             addSupported(new ValueType(type));
-        } else if (DocUtils.isListType(type) && type.isArray()) {
-            addSupported(new ArrayType(type));
         } else if (DocUtils.isListType(type)) {
             addSupported(new ListType(type));
+        } else if (DocUtils.isArrayType(type)) {
+            addSupported(new ArrayType(type));
         } else if (DocumentReference.class.isAssignableFrom(type)) {
             addSupported(new ReferenceType());
         } else {
@@ -91,7 +91,7 @@ public class ListType implements SchemaType, HasSupportedTypes {
         }
         if (result == null && getSupportedTypes().isEmpty()) {
             if (DocUtils.isValueType(type)) {
-               result = new ValueType(type);
+                result = new ValueType(type);
             } else if (DocUtils.isListType(type)) {
                 result = new ListType(type);
             } else if (DocUtils.isArrayType(type)) {
@@ -103,13 +103,19 @@ public class ListType implements SchemaType, HasSupportedTypes {
         }
         return result;
     }
-
+*/
     public List getDefaultValue() {
         return this.defaultValue;
     }
 
     public void setDefaultValue(List value) {
         this.defaultValue = value;
+    }
+
+
+    @Override
+    public SchemaTypeSet getSupportedSchemaTypes() {
+        return this.supportedSchemaTypes;
     }
 
     @Override
@@ -124,7 +130,7 @@ public class ListType implements SchemaType, HasSupportedTypes {
         if (this.defaultValue != other.defaultValue && (this.defaultValue == null || !this.defaultValue.equals(other.defaultValue))) {
             return false;
         }
-        if (this.supportedTypes != other.supportedTypes && (this.supportedTypes == null || !this.supportedTypes.equals(other.supportedTypes))) {
+        if (this.supportedSchemaTypes != other.supportedSchemaTypes && (this.supportedSchemaTypes == null || !this.supportedSchemaTypes.equals(other.supportedSchemaTypes))) {
             return false;
         }
         if (this.javaType != other.javaType && (this.javaType == null || !this.javaType.equals(other.javaType))) {
@@ -135,10 +141,53 @@ public class ListType implements SchemaType, HasSupportedTypes {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 61 * hash + (this.defaultValue != null ? this.defaultValue.hashCode() : 0);
-        hash = 61 * hash + (this.supportedTypes != null ? this.supportedTypes.hashCode() : 0);
-        hash = 61 * hash + (this.javaType != null ? this.javaType.hashCode() : 0);
+        int hash = 7;
+        hash = 13 * hash + (this.defaultValue != null ? this.defaultValue.hashCode() : 0);
+        hash = 13 * hash + (this.supportedSchemaTypes != null ? this.supportedSchemaTypes.hashCode() : 0);
+        hash = 13 * hash + (this.javaType != null ? this.javaType.hashCode() : 0);
         return hash;
     }
+
+    protected static class ListTypeSet extends SchemaTypeSet {
+
+        @Override
+        public SchemaType get(Class clazz) {
+            Class type = clazz;
+            if (clazz.isPrimitive()) {
+                type = DocUtils.getWrapper(clazz);
+            }
+
+            SchemaType result = super.get(type);
+            
+            if (result == null && this.isEmpty()) {
+                result = schemaTypeOf(type);
+            }
+            return result;
+        }
+
+        @Override
+        public SchemaType put(Class type) {
+
+            if (type == null) {
+                throw new NullPointerException("ListType.addSupportedByClass(null)");
+            }
+            if (type.isPrimitive()) {
+                throw new IllegalArgumentException("ListType doesn't support primitive value type {" + type + "}. ");
+            }
+
+            SchemaType result = super.put(type);
+            return result;
+        }
+
+        @Override
+        public boolean add(SchemaType schemaType) {
+            if (schemaType == null) {
+                throw new NullPointerException("ListType.addSupported(null)");
+            }
+            if (schemaType.getJavaType().isPrimitive()) {
+                throw new IllegalArgumentException("ListType doesn't support primitive value type {" + schemaType.getJavaType() + "}. ");
+            }
+            return super.add(schemaType);
+        }
+    }//class
 }

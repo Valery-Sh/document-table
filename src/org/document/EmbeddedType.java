@@ -47,6 +47,11 @@ public class EmbeddedType implements SchemaType{
         hash = 13 * hash + (this.schema != null ? this.schema.hashCode() : 0);
         return hash;
     }
+    
+    @Override
+    public SchemaTypeSet getSupportedSchemaTypes() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 
 }

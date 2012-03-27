@@ -4,6 +4,7 @@
  */
 package org.document;
 
+import java.util.HashSet;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -31,30 +32,105 @@ public class ArrayTypeTest {
     @After
     public void tearDown() {
     }
-
     /**
-     * Test of create method, of class ArrayType.
+     * Test of put(class) method, of class ListType.ListTypeSet
      */
     @Test
-    public void testCreate() {
-        System.out.println("ComponentType: create(Class)");
-        Class type = String[][].class;
-        ArrayType instance = new ArrayType(type);
-        assertNotNull(instance);
+    public void testArrayType_ArrayTypeSet_Put() {
+        System.out.println("ArrayType.ArrayTypeSet: put(Class)");
         
-        assertEquals(1,instance.getSupportedTypes().size());
-        assertEquals(ArrayType.class,instance.getSupportedTypes().get(0).getClass());
-        ArrayType lev1 = (ArrayType)instance.getSupportedTypes().get(0);
-        assertEquals(1,lev1.getSupportedTypes().size());
-        assertEquals(ValueType.class,lev1.getSupportedTypes().get(0).getClass());
-        ValueType vt = (ValueType)lev1.supportedTypes.get(0);
-        assertEquals(String.class,vt.getJavaType());
+        ArrayType instance = new ArrayType(String[].class);
+        //
+        // ArrayType has allready been created. Cannot invoke put method
+        //
+        try {
+            instance.getSupportedSchemaTypes().put(int.class);
+            fail("ArrayType has allready been created. Cannot invoke put method");
+        } catch(UnsupportedOperationException e) {
+            System.out.println("ArrayType has allready been created. Cannot invoke put method");
+        }
+        //
+        // ArrayType has allready been created. Cannot invoke add method
+        //
+        try {
+            instance.getSupportedSchemaTypes().add(new ArrayType(String[].class));
+            fail("ArrayType has allready been created. Cannot invoke add method");
+        } catch(UnsupportedOperationException e) {
+            System.out.println("ArrayType has allready been created. Cannot invoke add method");
+        }
         
     }
+
+    /**
+     * Test of add(SchemaType) method, of class ArrayType.ArrayTypeSet
+     */
+    @Test
+    public void testListType_ListTypeSet_Add() {
+        System.out.println("ListType.ListTypeSet: add(SchemaType)");
+        ArrayType instance = new ArrayType(String[].class);
+        
+        //
+        // ArrayType has allready been created. Cannot invoke add method
+        //
+        try {
+            instance.getSupportedSchemaTypes().add(new ArrayType(String[].class));
+            fail("ArrayType has allready been created. Cannot invoke add method");
+        } catch(UnsupportedOperationException e) {
+            System.out.println("ArrayType has allready been created. Cannot invoke add method");
+        }
+        
+    }
+
+    /**
+     * Test of getSupportedTypes method, of class ListType.
+     */
+    @Test
+    public void testGetSupportedSchemaTypes() {
+        System.out.println("ListType: getSupportedSchemaTypes()");
+        ListType instance = new ListType();
+        HashSet result = instance.getSupportedSchemaTypes();
+        assertTrue(result.isEmpty());
+        instance.getSupportedSchemaTypes().add(new ValueType(String.class));
+        result = instance.getSupportedSchemaTypes();        
+        assertTrue(result.size() == 1);
+        
+    }
+
+    /**
+     * Test of get(Class) method, of class ArrayType.ArrayTypeSet
+     */
+    @Test
+    public void testArrayType_ArrayTypeSet_Get() {
+        System.out.println("ArrayType.ArrayTypeSet: get(Class)");
+        ArrayType owner = new ArrayType(String[].class);
+        SchemaType st = owner.supportedSchemaTypes.get(String.class);
+        assertEquals(new ValueType(String.class),st);
+        
+        owner = new ArrayType(String[][].class);
+        st = owner.supportedSchemaTypes.get(String.class);
+        assertNull(st);
+        st = owner.supportedSchemaTypes.get(String[].class);        
+        assertEquals(new ArrayType(String[].class),st);        
+        
+        //
+        // Valid get call sequance 
+        //
+        owner = new ArrayType(Person[][][].class);
+        st = owner.getSupportedSchemaTypes().get(Person[][].class);
+        assertEquals(new ArrayType(Person[][].class),st);   
+        
+        st = st.getSupportedSchemaTypes().get(Person[].class);        
+        assertEquals(new ArrayType(Person[].class),st);   
+        
+        st = st.getSupportedSchemaTypes().get(Person.class);        
+        assertEquals(new EmbeddedType(Person.class),st);        
+        
+    }
+
     
     @Test
     public void testGetBaseType() {
-        System.out.println("ComponentType: getBaseType()");
+        System.out.println("ArrayType: getBaseType()");
         Class type = String[][].class;
         ArrayType instance = new ArrayType(type);
         assertEquals(String.class,instance.getBaseType());
@@ -67,23 +143,11 @@ public class ArrayTypeTest {
         instance = new ArrayType(type);
         assertEquals(Person.class,instance.getBaseType());
         //
-        // Tests if contains a single supported class
-        // and replacing supported class
+        // Constructor without parameters
         //
-/*        instance = new ArrayType();
-        assertNotNull(instance.getBaseType());
-        assertEquals(1,instance.supportedTypes.size());
-        instance.addSupported(new ValueType(Integer.class));
-        assertEquals(1,instance.supportedTypes.size());
-        assertEquals(Integer.class,instance.supportedTypes.get(0).getJavaType());
-        
         instance = new ArrayType();
-        ArrayType ct = new ArrayType();
-        instance.addSupported(ct);
-        assertNotNull(instance.getBaseType());
-        assertEquals(1,instance.supportedTypes.size());
         assertEquals(Object.class,instance.getBaseType());
- */
+        
     }
     
     @Test
@@ -95,12 +159,13 @@ public class ArrayTypeTest {
         type = String[][].class;
         instance = new ArrayType(type);
         assertEquals(2,instance.getDimentionSize());
+
+        //
+        // Constructor without parameters
+        //
+        instance = new ArrayType();
+        assertEquals(1,instance.getDimentionSize());
         
-/*        instance = new ArrayType();
-        assertEquals(1,instance.getDimentionSize());        
-        ArrayType ct = new ArrayType();
-        instance.addSupported(ct);
-        assertEquals(2,instance.getDimentionSize());
-*/        
+        
     }
 }
