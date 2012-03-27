@@ -9,5 +9,5 @@ package org.document;
  * @author Valery
  */
 public interface HasSupportedTypes {
-    SchemaType getSupportedType(Class type);
+    SchemaType getSupportedByClass(Class type);
 }

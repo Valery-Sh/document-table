@@ -198,6 +198,7 @@ public class DocUtils {
                 || type.equals(String.class)
                 || type.equals(Boolean.class)
                 || type.equals(Integer.class)
+                || type.equals(Short.class)
                 || type.equals(Byte.class)
                 || type.equals(Float.class)
                 || type.equals(Double.class)
@@ -267,7 +268,30 @@ public class DocUtils {
         result = Array.newInstance(aclass, d);
         return result;
     }
-
+    public static Class getWrapper(Class primitive) {
+        if ( ! primitive.isPrimitive()) {
+            return primitive;
+        }
+        Class result = null;
+        if ( primitive.equals(int.class)) {
+            result = Integer.class;
+        } else if ( primitive.equals(long.class)) {
+            result = Long.class;
+        } else if ( primitive.equals(byte.class)) {
+            result = Byte.class;
+        } else if ( primitive.equals(char.class)) {
+            result = Character.class;
+        } else if ( primitive.equals(boolean.class)) {
+            result = Boolean.class;
+        } else if ( primitive.equals(short.class)) {
+            result = Short.class;
+        } else if ( primitive.equals(float.class)) {
+            result = Float.class;
+        } else if ( primitive.equals(double.class)) {
+            result = Double.class;
+        } 
+        return result;
+    }
     public static Class getBaseComponentType(Class type, int[] dimCount) {
 
         if (type == null) {
@@ -337,8 +361,8 @@ public class DocUtils {
             r = false;
         } else if (type.equals(Integer.TYPE)) {
             r = 0;
-//            return new Integer(0);
-
+        } else if (type.equals(Short.TYPE)) {
+            r = 0;
         } else if (type.equals(Byte.TYPE)) {
             r = new Byte("0");
         } else if (type.equals(Float.TYPE)) {
@@ -362,6 +386,8 @@ public class DocUtils {
             r = 0;
         } else if (type.equals(Byte.class)) {
             r = new Byte("0");
+        } else if (type.equals(Short.class)) {
+            r = new Short("0");
         } else if (type.equals(Float.class)) {
             r = 0.0f;
         } else if (type.equals(Double.class)) {

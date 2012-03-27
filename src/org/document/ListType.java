@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a java class that implements 
+ * Represents a java class that implements
  * <code>java.util.List</code> interface.
- * 
+ *
  * @author V. Shyshkin
  */
 public class ListType implements SchemaType, HasSupportedTypes {
@@ -22,6 +22,7 @@ public class ListType implements SchemaType, HasSupportedTypes {
     public ListType() {
         defaultValue = new ArrayList(2);
         supportedTypes = new ArrayList();
+        javaType = List.class;
     }
 
     public ListType(Class javaType) {
@@ -38,8 +39,15 @@ public class ListType implements SchemaType, HasSupportedTypes {
         this.javaType = javaType;
     }
 
-    public void addByClass(Class type) {
+    public void addSupportedByClass(Class type) {
+        if (type == null) {
+            throw new NullPointerException("ListType.addSupportedByClass(null)");
+        }
+
         if (DocUtils.isValueType(type)) {
+            if (type.isPrimitive()) {
+                throw new IllegalArgumentException("ListType doesn't support primitive value type {" + type + "}. ");
+            }
             addSupported(new ValueType(type));
         } else if (DocUtils.isListType(type) && type.isArray()) {
             addSupported(new ArrayType(type));
@@ -54,7 +62,13 @@ public class ListType implements SchemaType, HasSupportedTypes {
     }
 
     public void addSupported(SchemaType type) {
-            supportedTypes.add(type);
+        if (type == null) {
+            throw new NullPointerException("ListType.addSupported(null)");
+        }
+        if ((type instanceof ValueType) && type.getJavaType().isPrimitive()) {
+            throw new IllegalArgumentException("ListType doesn't support primitive value type {" + type.getJavaType() + "}. ");
+        }
+        supportedTypes.add(type);
     }
 
     protected List<SchemaType> getSupportedTypes() {
@@ -62,7 +76,12 @@ public class ListType implements SchemaType, HasSupportedTypes {
     }
 
     @Override
-    public SchemaType getSupportedType(Class type) {
+    public SchemaType getSupportedByClass(Class clazz) {
+        Class type = clazz;
+        if (clazz.isPrimitive()) {
+            type = DocUtils.getWrapper(clazz);
+        }
+
         SchemaType result = null;
         for (SchemaType st : getSupportedTypes()) {
             if (st.getJavaType().isAssignableFrom(type)) {
@@ -70,17 +89,17 @@ public class ListType implements SchemaType, HasSupportedTypes {
                 break;
             }
         }
-        if ( result == null && getSupportedTypes().isEmpty() ) {
-            if ( DocUtils.isValueType(type)) {
-                result = new ValueType(type);
-            } else if ( DocUtils.isListType(type)) {
-                 result = new ListType(type);
-            } else  if ( DocUtils.isArrayType(type)) {
-                 result = new ArrayType(type);
-            } else if ( DocUtils.isEmbeddedType(type)) {
+        if (result == null && getSupportedTypes().isEmpty()) {
+            if (DocUtils.isValueType(type)) {
+               result = new ValueType(type);
+            } else if (DocUtils.isListType(type)) {
+                result = new ListType(type);
+            } else if (DocUtils.isArrayType(type)) {
+                result = new ArrayType(type);
+            } else if (DocUtils.isEmbeddedType(type)) {
                 DocumentSchema ds = DocUtils.createSchema(type);
                 result = new EmbeddedType(ds);
-            } 
+            }
         }
         return result;
     }

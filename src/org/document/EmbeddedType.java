@@ -2,12 +2,16 @@ package org.document;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class EmbeddedType implements SchemaType{
     
     private DocumentSchema schema;
 
+    public EmbeddedType(Class type) {
+        this.schema = DocUtils.createSchema(type);
+    }
+    
     public EmbeddedType(DocumentSchema schema) {
         this.schema = schema;
     }

@@ -58,7 +58,7 @@ public class ArrayType implements SchemaType, HasSupportedTypes {
     }
 
     @Override
-    public SchemaType getSupportedType(Class type) {
+    public SchemaType getSupportedByClass(Class type) {
         SchemaType result = null;
         for (SchemaType st : getSupportedTypes()) {
             if (st.getJavaType().isAssignableFrom(type)) {

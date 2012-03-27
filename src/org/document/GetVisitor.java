@@ -58,9 +58,9 @@ public class GetVisitor extends DocumentVisitor{
         }
         SchemaType st;
         if (info.getSourceSchemaType() instanceof ListType ) {
-            st = ((ListType)info.getSourceSchemaType()).getSupportedType(result.getClass());
+            st = ((ListType)info.getSourceSchemaType()).getSupportedByClass(result.getClass());
         } else if (info.getSourceSchemaType() instanceof ArrayType ) {
-            st = ((ArrayType)info.getSourceSchemaType()).getSupportedType(result.getClass());
+            st = ((ArrayType)info.getSourceSchemaType()).getSupportedByClass(result.getClass());
         } else {
             String nm = paths[infoList.size()-1];
             Field f = ((EmbeddedType)info.getSourceSchemaType()).getSchema().getField(nm);
@@ -163,7 +163,7 @@ public class GetVisitor extends DocumentVisitor{
         info.setResult(result);
         SchemaType st = null;
         if ( result != null ) {
-            st = ((HasSupportedTypes)schemaType).getSupportedType(result.getClass());
+            st = ((HasSupportedTypes)schemaType).getSupportedByClass(result.getClass());
             info.setResultSchemaType(st);
         }
         
