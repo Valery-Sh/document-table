@@ -65,7 +65,7 @@ public class ArrayTypeTest {
      * Test of add(SchemaType) method, of class ArrayType.ArrayTypeSet
      */
     @Test
-    public void testListType_ListTypeSet_Add() {
+    public void testArrayType_ArrayTypeSet_Add() {
         System.out.println("ListType.ListTypeSet: add(SchemaType)");
         ArrayType instance = new ArrayType(String[].class);
         
@@ -82,17 +82,18 @@ public class ArrayTypeTest {
     }
 
     /**
-     * Test of getSupportedTypes method, of class ListType.
+     * Test of getSupportedTypes method, of class ArrayType.
      */
     @Test
     public void testGetSupportedSchemaTypes() {
-        System.out.println("ListType: getSupportedSchemaTypes()");
-        ListType instance = new ListType();
+        System.out.println("ArrayType: getSupportedSchemaTypes()");
+        ArrayType instance = new ArrayType();
         HashSet result = instance.getSupportedSchemaTypes();
-        assertTrue(result.isEmpty());
-        instance.getSupportedSchemaTypes().add(new ValueType(String.class));
-        result = instance.getSupportedSchemaTypes();        
         assertTrue(result.size() == 1);
+        
+        instance = new ArrayType(String[][][].class);
+        result = instance.getSupportedSchemaTypes();
+        assertTrue(result.size() == 1);        
         
     }
 
@@ -113,7 +114,7 @@ public class ArrayTypeTest {
         assertEquals(new ArrayType(String[].class),st);        
         
         //
-        // Valid get call sequance 
+        // Valid get call sequence 
         //
         owner = new ArrayType(Person[][][].class);
         st = owner.getSupportedSchemaTypes().get(Person[][].class);
@@ -133,7 +134,8 @@ public class ArrayTypeTest {
         System.out.println("ArrayType: getBaseType()");
         Class type = String[][].class;
         ArrayType instance = new ArrayType(type);
-        assertEquals(String.class,instance.getBaseType());
+        Object expType = String.class;
+        assertEquals(expType,instance.getBaseType());
         
         type = Integer[].class;
         instance = new ArrayType(type);
