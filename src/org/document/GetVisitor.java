@@ -64,7 +64,8 @@ public class GetVisitor extends DocumentVisitor{
         } else {
             String nm = paths[infoList.size()-1];
             Field f = ((EmbeddedType)info.getSourceSchemaType()).getSchema().getField(nm);
-            st = f.getSupportedTypes().get(0);
+            //st = f.getSupportedTypes().get(0);
+            st = f.getSchemaType();
         }
         
         if (DocUtils.isListType(result.getClass())) {
@@ -87,7 +88,7 @@ public class GetVisitor extends DocumentVisitor{
         DocumentSchema ds = embeddedType.getSchema();
         int pathIndex = infoList.size() - 1;
         Field f = ds.getField(paths[pathIndex]);
-        SchemaType st = f.getDefaultType();        
+        SchemaType st = f.getSchemaType();        
         info.setResultSchemaType(st);        
         
         String path = "";

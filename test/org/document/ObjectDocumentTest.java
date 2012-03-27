@@ -359,7 +359,7 @@ public class ObjectDocumentTest {
        EmbeddedType etype = new EmbeddedType(addrSchema);
        Field tailField2 = new Field("addrTail");
        tailField2.setTail(true);
-       tailField2.add(etype);
+       tailField2.setSchemaType(etype);
        
        Address addrTail = new Address("Michigan","Detroit", "Witherall",124, 97);
        instance.getSchema().getFields().add(tailField2);
@@ -401,7 +401,7 @@ public class ObjectDocumentTest {
        tmp.put("face","round");
        DocumentSchema mapSchema = DocUtils.createSchema(tmp);
        EmbeddedType et = new EmbeddedType(mapSchema);
-       mapField.add(et);
+       mapField.setSchemaType(et);
        int idx = ds.getFields().indexOf(ds.getField("personProps"));
        ds.getFields().set(idx, mapField);
        instance.put("personProps/height",176);
@@ -503,7 +503,7 @@ public class ObjectDocumentTest {
         List list2 = new ArrayList();
         list2.add(321);
         list2.add("Bill");
-//        listOfList.add(list2);
+//        listOfList.addSupported(list2);
         
         List expList2 = new ArrayList();
         expList2.add(321);
@@ -527,7 +527,7 @@ public class ObjectDocumentTest {
         result = instance.get("listOfList/1");
         assertEquals(expList2,result);
 
-        //listOfList.add(99);
+        //listOfList.addSupported(99);
         instance.put("listOfList/2",99);
         // Now listOfList.size=3:
         // elem0 := ["list1",123]
@@ -542,7 +542,7 @@ public class ObjectDocumentTest {
         List list2_1 = new ArrayList();
         list2_1.add("list2_1");
         
-        //list2.add(list2_1);
+        //list2.addSupported(list2_1);
         instance.put("listOfList/1/2",list2_1);
         // Now listOfList.size=3:
         // elem0 := ["list1",123]
@@ -559,7 +559,7 @@ public class ObjectDocumentTest {
         // EmbeddedType as List element
         //
         Address addr1 = new Address("Michigan","Detroit", "Witherall",124, 97);
-        //listOfList.add(addr1);
+        //listOfList.addSupported(addr1);
         Address expaddr1 = new Address("Michigan","Detroit", "Witherall",124, 97);        
         expListOfList.add(expaddr1);
         // Now listOfList.size=1:

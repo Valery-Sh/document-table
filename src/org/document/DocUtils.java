@@ -116,16 +116,16 @@ public class DocUtils {
     public static Field createField(String name, Class type) {
         Field f = new Field(name, false, false);
         if (isValueType(type)) {
-            f.add(new ValueType(type));
+            f.setSchemaType(new ValueType(type));
         } else if (isListType(type)) {
-            f.add(new ListType(type));
+            f.setSchemaType(new ListType(type));
         } else if (isArrayType(type)) {
-                f.add(new ArrayType(type));
+                f.setSchemaType(new ArrayType(type));
         } else if (DocumentReference.class.isAssignableFrom(type)) {
-            f.add(new ReferenceType());
+            f.setSchemaType(new ReferenceType());
         } else {
             DocumentSchema embSchema = DocUtils.createSchema(type);
-            f.add(new EmbeddedType(embSchema));
+            f.setSchemaType(new EmbeddedType(embSchema));
         }
         return f;
     }

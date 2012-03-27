@@ -81,8 +81,8 @@ public class DocUtilsTest {
         f = schema.getField("family");
         assertNotNull(f);
         assertEquals(f.getName(),"family");
-        assertEquals(ListType.class,f.getSupportedTypes().get(0).getClass());
-        ListType at = (ListType)f.getSupportedTypes().get(0);
+        assertEquals(ListType.class,f.getSchemaType().getClass());
+        ListType at = (ListType)f.getSchemaType();
         
         //
         // embedded
@@ -91,7 +91,7 @@ public class DocUtilsTest {
         assertNotNull(f);
         assertEquals(f.getName(),"order");
         
-        EmbeddedType embedded = (EmbeddedType)f.supportedTypes.get(0);
+        EmbeddedType embedded = (EmbeddedType)f.getSchemaType();
         assertNotNull(embedded);        
         DocumentSchema embschema = embedded.getSchema();
         
@@ -101,7 +101,7 @@ public class DocUtilsTest {
         
         f = embschema.getField("orderNum");
         assertNotNull(f);
-        ValueType vt = (ValueType)f.getSupportedTypes().get(0);
+        ValueType vt = (ValueType)f.getSchemaType();
         assertEquals(Long.class,vt.getJavaType());
 
         DocumentSchema sc = DocUtils.createSchema(ObjectWithArray.class);        
@@ -130,7 +130,7 @@ public class DocUtilsTest {
        tmp.put("face","round");
        DocumentSchema mapSchema = DocUtils.createSchema(tmp);
        EmbeddedType et = new EmbeddedType(mapSchema);
-       mapField.add(et);
+       mapField.setSchemaType(et);
        int idx = ds.getFields().indexOf(ds.getField("personProps"));
        ds.getFields().set(idx, mapField);
        instance.put("personProps/height",176);

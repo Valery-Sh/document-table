@@ -18,29 +18,20 @@ public class Field {
     protected List<SchemaType> supportedTypes;
     protected boolean required;
     protected boolean notNull;
-    
+    protected SchemaType schemaType;
     protected boolean tail;
 
     public Field(Object name) {
         assert(name != null);
         this.name = name;
         supportedTypes = new ArrayList<SchemaType>();
-        //ValueType vt = new ValueType(Object.class);
-        //supportedTypes.add(vt);
+        this.schemaType= new ValueType(Object.class);
     }
     public Field(Object name,boolean required,boolean notNull){//,Class ... supported) {
         this(name);
         this.name = name;
         this.required = required;
         this.notNull = notNull;
-/*        if ( supported != null ) {
-            
-            for ( Class clazz : supported) {
-                ValueType vt = new ValueType(clazz);
-                supportedTypes.add(vt);
-            }
-        }
-        */
     }
 
     public boolean isTail() {
@@ -51,15 +42,25 @@ public class Field {
         this.tail = tail;
     }
 
-    public void add(SchemaType type) {
+    public void addSupported(SchemaType type) {
         supportedTypes.add(type);
     }
-    public SchemaType getDefaultType() {
-        if ( this.supportedTypes.isEmpty() ) {
+    
+    public SchemaType getSchemaType() {
+        return this.schemaType;
+        
+/*        if ( this.supportedTypes.isEmpty() ) {
             return new ValueType(Object.class);
         }
         return this.supportedTypes.get(0);
+*/
     }
+
+    public void setSchemaType(SchemaType schemaType) {
+        this.schemaType = schemaType;
+    }
+    
+    
     protected List<SchemaType> getSupportedTypes() {
         return supportedTypes;
     }

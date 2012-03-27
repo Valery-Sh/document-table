@@ -35,7 +35,7 @@ public class FieldTest {
     }
 
     /**
-     * Test of add method, of class Field.
+     * Test of addSupported method, of class Field.
      */
     @Test
     public void testAdd_ValueType() {
@@ -45,8 +45,8 @@ public class FieldTest {
         // No supported type added yet
         Field instance = new Field("age");
         assertEquals(0,instance.getSupportedTypes().size());
-        // add one supported type
-        instance.add(type);
+        // addSupported one supported type
+        instance.addSupported(type);
         List list = instance.getSupportedTypes();
         assertEquals(1,list.size());        
         // Valid 
@@ -59,9 +59,9 @@ public class FieldTest {
         
         type = new ValueType(String.class);
         //
-        // add second supported type
+        // addSupported second supported type
         //
-        instance.add(type);
+        instance.addSupported(type);
         assertEquals(2,instance.getSupportedTypes().size());
         
         list = instance.getSupportedTypes();
@@ -83,7 +83,7 @@ public class FieldTest {
     }
 
     /**
-     * Test of add method, of class Field.
+     * Test of addSupported method, of class Field.
      */
     @Test
     public void testAdd_DocumentSchema() {
@@ -91,13 +91,13 @@ public class FieldTest {
         DocumentSchema schema = new DefaultSchema();
         // No supported type added yet
         Field instance = new Field("address");
-        instance.add(new EmbeddedType(schema));
+        instance.addSupported(new EmbeddedType(schema));
         assertEquals(1,instance.getSupportedTypes().size());
         
     }
 
     /**
-     * Test of add method, of class Field.
+     * Test of addSupported method, of class Field.
      */
     @Test
     public void testAdd_DocumentReference() {
@@ -105,7 +105,7 @@ public class FieldTest {
         ReferenceType ref = new ReferenceType();
         // No supported type added yet
         Field instance = new Field("customer");
-        instance.add(ref);
+        instance.addSupported(ref);
         assertEquals(1,instance.getSupportedTypes().size());
         
     }
@@ -119,7 +119,7 @@ public class FieldTest {
         ReferenceType ref = new ReferenceType();
         // No supported type added yet
         Field instance = new Field("customer");
-        instance.add(ref);
+        instance.addSupported(ref);
         assertEquals(1,instance.getSupportedTypes().size());
         
     }
