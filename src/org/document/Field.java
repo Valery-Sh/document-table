@@ -20,7 +20,12 @@ public class Field {
     protected boolean notNull;
     protected SchemaType schemaType;
     protected boolean tail;
-
+    protected boolean readOnly;
+    protected boolean calculated;
+    protected boolean declaredFinal;
+    protected boolean hasNoWriteMethod;
+    protected FieldCalculator calculator;
+    
     public Field(Object name) {
         assert(name != null);
         this.name = name;
@@ -32,6 +37,34 @@ public class Field {
         this.name = name;
         this.required = required;
         this.notNull = notNull;
+    }
+
+    public boolean isCalculated() {
+        return calculated;
+    }
+
+    public FieldCalculator getCalculator() {
+        return calculator;
+    }
+
+    public void setCalculator(FieldCalculator calculator) {
+        this.calculator = calculator;
+    }
+
+
+    public void setCalculated(boolean calculated) {
+        this.calculated = calculated;
+    }
+
+    public boolean isReadOnly() {
+        if ( calculated || declaredFinal || hasNoWriteMethod ) {
+            return true;
+        }
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     public boolean isTail() {

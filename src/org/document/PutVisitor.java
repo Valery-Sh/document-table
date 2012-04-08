@@ -3,7 +3,6 @@ package org.document;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -25,19 +24,19 @@ public class PutVisitor extends DocumentVisitor {
         for (int i = 0; i < paths.length; i++) {
             decrPath += "/" + paths[i];
         }
-        //System.arraycopy(paths, 0, decrPaths, 0, paths.length);
+
         // Me must keep in mind that a field may be in 'tail'
         Field f = rootDoc.getSchema().getField(paths[0]);
 
         if (paths.length > 1) {
-//            decrPaths = new String[paths.length - 1];
-//            System.arraycopy(paths, 0, decrPaths, 0, paths.length - 1);
-
             decrPath = "";
             for (int i = 0; i < paths.length - 1; i++) {
                 decrPath += "/" + paths[i];
             }
-
+        } else {
+            if ( f.isReadOnly() ) {
+               
+            }
         }
 
         GetVisitor visitor = new GetVisitor(rootDoc);
@@ -60,7 +59,8 @@ public class PutVisitor extends DocumentVisitor {
         }
 
         if (getException() != null) {
-            RuntimeException re = (RuntimeException) visitor.getException();
+            //RuntimeException re = (RuntimeException) visitor.getException();
+            RuntimeException re = (RuntimeException) getException();
             throw re;
         }
     }
@@ -138,6 +138,11 @@ public class PutVisitor extends DocumentVisitor {
             info.setException(new NullPointerException("A schema doesn't contain a field for key = " + path));
             return;
         }
+        if (f.isReadOnly()) {
+            info.setException(new UnsupportedOperationException("A field with a name '" + f.getName() + "' is readOnly"));
+            return;
+        }
+        
         String nm = paths[pathIndex];
         Object result;
         try {

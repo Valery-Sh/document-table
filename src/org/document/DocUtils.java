@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -72,10 +73,16 @@ public class DocUtils {
             for (int i = 0; i < props.length; i++) {
                 Class ptype = props[i].getPropertyType();
                 String pname = props[i].getName();
-
+                
                 Field f = createField(pname, ptype);
                 if (f != null) {
                     schema.getFields().add(f);
+                    if ( props[i].getWriteMethod() == null ) {
+                        f.hasNoWriteMethod = true;
+                    }
+                    try {
+                        f.declaredFinal = Modifier.isFinal(clazz.getDeclaredField(pname).getModifiers());
+                    } catch(Exception e) {}
                 }
             }//for
 

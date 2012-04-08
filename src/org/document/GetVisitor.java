@@ -102,7 +102,14 @@ public class GetVisitor extends DocumentVisitor{
 
         }
         String nm = paths[pathIndex];
-        Object result = DocUtils.getValue(nm, sourceObject);
+        Object result = null;
+        if ( f.isCalculated() ) {
+            if ( f.getCalculator() != null ) {
+                result = f.getCalculator().getValue(this.getRootDoc());
+            }
+        } else {
+            result = DocUtils.getValue(nm, sourceObject);
+        }
         info.setResult(result);
         
         if (pathIndex == paths.length - 1) {

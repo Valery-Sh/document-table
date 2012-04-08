@@ -417,6 +417,48 @@ public class ObjectDocumentTest {
            System.out.println("No such property: name='heght'");
        }
 
+       //
+       // Get Calculated Field
+       //
+       person = new Person("Bill","Smith", new Date(), 1);
+       order = new Order(125L, 12345);
+       person.setOrder(order);
+        
+       instance = new ObjectDocument(person);
+       
+       Field f = new Field("fullName");
+       f.setCalculated(true);
+       FieldCalculator fullNameCalc = new FieldCalculator() {
+
+            @Override
+            public Object getValue(Document doc) {
+                Person p = (Person)((ObjectDocument)doc).getDataObject();
+                return p.getFirstName() + " " + p.getLastName();
+            }
+           
+       };
+       f.setCalculator(fullNameCalc);
+       instance.getSchema().getFields().add(f);
+       result = instance.get("fullName");
+       assertEquals("Bill Smith",result);
+       
+       Field f1 = new Field("orderSumInc");
+       f1.setCalculated(true);
+       FieldCalculator orderSumInc = new FieldCalculator() {
+
+            @Override
+            public Object getValue(Document doc) {
+                Person p = (Person)((ObjectDocument)doc).getDataObject();
+                return p.getOrder().getOrderSum() + 100;
+            }
+           
+       };
+       f1.setCalculator(orderSumInc);
+       Field of = instance.getSchema().getField("order");
+       ((EmbeddedType)of.getSchemaType()).getSchema().getFields().add(f1);
+       result = instance.get("order/orderSumInc");
+       assertEquals(100L,result);
+       
        
     }
 
@@ -683,6 +725,38 @@ public class ObjectDocumentTest {
         instance.put("list/0",intIntArray);
         result = instance.get("list/0/1/1");
         assertEquals(11, result);
+
+        //
+        // Attemp to assign a value to a readOnly field
+        //
+        
+        instance = new ObjectDocument(person);
+        instance.put("sex", 4);
+        assertEquals(4,instance.get("sex"));
+        
+        PersonWithReadOnlyFields personw = new PersonWithReadOnlyFields("Bill","Smith", new Date(), 1);
+        OrderWithReadOnlyFields orderw = new OrderWithReadOnlyFields(125L, 12345);
+        personw.setOrderWithReadOnlyFields(orderw);
+        instance = new ObjectDocument(personw);
+        try {
+            instance.put("sex", 4);
+            fail("Try that 'sex' is a readOnly property ( no write method )");
+        } catch(UnsupportedOperationException e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            instance.put("orderWithReadOnlyFields/info", "new info");
+            fail("Try that 'orderWithReadOnlyFields/info' is a readOnly property ( declared as final) ");
+        } catch(UnsupportedOperationException e) {
+            System.out.println(e.getMessage());
+        }
+        instance.getSchema().getField("firstName").setReadOnly(true);
+        try {
+            instance.put("firstName", "Ann");
+            fail("Try that 'firstName' is a readOnly property ( made explicitly ) ");
+        } catch(UnsupportedOperationException e) {
+            System.out.println(e.getMessage());
+        }
         
     }
 

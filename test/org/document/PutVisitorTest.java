@@ -3,8 +3,8 @@ package org.document;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
 import org.junit.*;
 
 
@@ -109,7 +109,7 @@ public class PutVisitorTest {
     /**
      * Test of visitEmbedded method, of class PutVisitor.
      */
-
+    @Test
     public void testVisitEmbedded() {
         System.out.println("PutVisitor: visitEmbedded");
         DocumentSchema ds = DocUtils.createSchema(Person.class);
@@ -123,6 +123,26 @@ public class PutVisitorTest {
         visitor.visitEmbedded(atype, sourceObject, "Nelson");
         Object result = visitor.getResult();
         assertEquals("Nelson",result);
+        //
+        // Attemp to assign a value to a readOnly field
+        //
+        doc.put("sex",2);
+        assertEquals( 2,person.getSex());
+        assertTrue(visitor.getException() == null );        
+
+        ds = DocUtils.createSchema(PersonWithReadOnlyFields.class);
+        atype = new EmbeddedType(ds);
+        sourceObject = new PersonWithReadOnlyFields("Bill","Smith", new Date(), 1);
+        PersonWithReadOnlyFields personw = new PersonWithReadOnlyFields("Bill","Smith", new Date(), 1);
+        
+        doc = new ObjectDocument(personw);
+        visitor = new PutVisitor(doc);
+        visitor.setPaths("sex");
+        visitor.visitEmbedded(atype, sourceObject, 4);
+        assertTrue(visitor.getException() != null );
+        
+
+        
     }
 
 

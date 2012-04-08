@@ -19,6 +19,10 @@ public abstract  class DocumentVisitor {
         infoList = new ArrayList<DocumentVisitor.VisitorInfo>();
     }
 
+    public Document getRootDoc() {
+        return rootDoc;
+    }
+
     public void visitDocument(String key) {
         paths = DocUtils.split(key, '/');
         infoList = new ArrayList<DocumentVisitor.VisitorInfo>();
