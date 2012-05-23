@@ -11,20 +11,6 @@ package org.document;
 public abstract class AbstractDocumentGroup implements DocumentGroup {
     
     @Override
-    public Document create() {
-        MapDocument d = new MapDocument();
-        d.documentGroup = this;
-        return d;
-    }
-    @Override
-    public Document create(DocumentSchema schema) {
-        MapDocument d = (MapDocument)create();
-        if ( ! schemaExists(schema)) {
-            this.addSchema(schema);
-        }
-        return d;
-    }    
-    @Override
     public ObjectDocument create(Object javaBean) {
         ObjectDocument d = new ObjectDocument(javaBean);
         if ( ! schemaExists(javaBean) ) {

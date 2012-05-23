@@ -18,7 +18,7 @@ public class ObjectDocument<T> extends AbstractDocument {
         this.dataObject = dataObject;
         tail = new HashMap();
     }
-
+/*
     @Override
     public Object get(Object key) {
         if (key == null || (key.toString().trim().isEmpty())) {
@@ -47,6 +47,7 @@ public class ObjectDocument<T> extends AbstractDocument {
             throw (RuntimeException)visitor.getException();
         }
     }
+*/
     @Override
     public DocumentSchema getSchema() {
         DocumentSchema ds;
@@ -67,12 +68,12 @@ public class ObjectDocument<T> extends AbstractDocument {
         return dataObject;
     }
 
-    @Override
+//    @Override
     protected T newDataInstance() {
         return null;
     }
 
-    @Override
+//    @Override
     protected T cloneData() {
         return null;
     }

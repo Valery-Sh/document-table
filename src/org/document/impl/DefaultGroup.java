@@ -78,4 +78,15 @@ public class DefaultGroup extends AbstractDocumentGroup {
         //TODO если не ObjectDocument
         return schema;
     }
+
+/*    @Override
+    public Document create() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Document create(DocumentSchema schema) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    */
 }

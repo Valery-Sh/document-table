@@ -77,7 +77,7 @@ public class AbstractDocumentTest {
     /**
      * Test of newDataInstance method, of class AbstractDocument.
      */
-    @Test
+/*    @Test
     public void testNewDataInstance() {
         System.out.println("AbstractDocument: newDataInstance");
         AbstractDocument instance = new AbstractDocumentMock();
@@ -86,11 +86,11 @@ public class AbstractDocumentTest {
         Object result = instance.newDataInstance();
         assertEquals(expResult, result.getClass());
     }
-
+*/
     /**
      * Test of cloneData method, of class AbstractDocument.
      */
-    @Test
+/*    @Test
     public void testCloneData() {
         System.out.println("AbstractDocument: cloneData()");
         Object key = "name";
@@ -104,4 +104,5 @@ public class AbstractDocumentTest {
         
         
     }
+*/
 }

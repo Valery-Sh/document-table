@@ -152,7 +152,6 @@ public class DocUtils {
                     Object v = m.invoke(obj, null);
                     return v;
                 }
-
             }//for
 
         } catch (IntrospectionException ex) {

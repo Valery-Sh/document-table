@@ -15,7 +15,7 @@ public class AbstractDocumentMock<T> extends AbstractDocument{
 
     private Map<Object,Object> data = new HashMap<Object,Object>();
     
-    @Override
+/*    @Override
     protected T newDataInstance() {
         return (T)new HashMap();
     }
@@ -30,7 +30,7 @@ public class AbstractDocumentMock<T> extends AbstractDocument{
         return (T)m;
         
     }
-
+*/
     @Override
     public Object get(Object key) {
         return data.get(key);

@@ -11,7 +11,9 @@ public class EmbeddedType implements SchemaType{
     public EmbeddedType(Class type) {
         this.schema = DocUtils.createSchema(type);
     }
-    
+//    public Object getValue(T obj,String path) {
+//        return null;
+//    }
     public EmbeddedType(DocumentSchema schema) {
         this.schema = schema;
     }

@@ -4,8 +4,6 @@
  */
 package org.document;
 
-import java.util.Map;
-
 /**
  *
  * @author Valery
@@ -45,9 +43,9 @@ public abstract class AbstractDocument<T> implements Document {
     public DocumentSchema getSchema() {
         return schema;
     }
-    protected abstract T newDataInstance();
+//    protected abstract T newDataInstance();
 
-    protected abstract T cloneData();
+//    protected abstract T cloneData();
 /*    protected Object newDataInstance() {
         return DocUtils.newInstance(dataMap);
     }
@@ -56,4 +54,34 @@ public abstract class AbstractDocument<T> implements Document {
         return DocUtils.cloneValue(dataMap);
     }
 */
+    
+    @Override
+    public Object get(Object key) {
+        if (key == null || (key.toString().trim().isEmpty())) {
+            return null;
+        }
+        String[] paths = DocUtils.split(key.toString(), '/');
+        // Me must keep in mind that a field may be in 'tail'
+        //Field f = getSchema().getField(paths[0]);
+        GetVisitor visitor = new GetVisitor(this);
+        visitor.visitDocument(key.toString());
+        if ( visitor.getException() != null ) {
+            RuntimeException re = (RuntimeException)visitor.getException();
+            throw re;
+        }
+        return visitor.getResult();
+    }
+    @Override
+    public void put(Object key, Object value) {
+        if (key == null || (key.toString().trim().isEmpty())) {
+            return;
+        }
+        PutVisitor visitor = new PutVisitor(this);
+        visitor.visitDocument(key.toString(), value);
+        
+        if ( visitor.getException() != null ) {
+            throw (RuntimeException)visitor.getException();
+        }
+    }
+    
 }
